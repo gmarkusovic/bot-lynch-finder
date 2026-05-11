@@ -134,15 +134,16 @@ def main() -> None:
     )
     parser.add_argument(
         "--market",
-        choices=["usa", "europe", "chile", "all"],
-        default="all",
-        help="Mercado a analizar en modo screener (default: all)",
+        default="usa,chile",
+        help="Mercado(s) a analizar: usa, chile, europe o combinados con coma (default: usa,chile)",
     )
     args = parser.parse_args()
 
-    markets = (
-        ["usa", "europe", "chile"] if args.market == "all" else [args.market]
-    )
+    _valid = {"usa", "europe", "chile"}
+    if args.market == "all":
+        markets = ["usa", "chile"]
+    else:
+        markets = [m.strip() for m in args.market.split(",") if m.strip() in _valid]
 
     all_results: dict[str, list[LynchResult]] = {}
 

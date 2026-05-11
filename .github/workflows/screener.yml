@@ -32,8 +32,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run Lynch screener (all markets)
-        run: python src/main.py --mode all --market all
+      - name: Run Lynch screener (USA + Chile)
+        run: python src/main.py --mode all --market usa,chile
 
       - name: Commit HTML report to docs/
         run: |

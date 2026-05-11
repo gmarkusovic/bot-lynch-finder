@@ -55,8 +55,11 @@ def _stock_block(r: LynchResult) -> str:
     sma200 = (_v(r.price_vs_sma200, 1, "%") if r.price_vs_sma200 is not None
               else "—")
 
+    price  = f"${r.price:,.2f}" if r.price else "—"
+
     return (
         f"\n<b>{r.ticker} - {r.name}</b>\n"
+        f"💲 Precio: <b>{price}</b>\n"
         f"{emoji} <b>{r.signal.replace('_', ' ')}</b> · {r.category} · {lynch}\n"
         f"<b>— Criterios Lynch —</b>\n"
         f"  PEG: {peg}   P/E: {pe}   Crec. EPS: {growth}\n"
