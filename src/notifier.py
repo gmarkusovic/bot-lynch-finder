@@ -38,13 +38,13 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
             lines.append(f"\n🚀 <b>COMPRA FUERTE ({len(compra_fuerte)})</b>")
             for r in sorted(compra_fuerte, key=lambda x: x.peg)[:5]:
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
-                lines.append(f"  • <b>{r.ticker}</b> — PEG={r.peg:.2f} {rsi}")
+                lines.append(f"  • <b>{r.ticker} - {r.name}</b> — PEG={r.peg:.2f} {rsi}")
 
         if compra:
             lines.append(f"\n🟢 <b>COMPRA ({len(compra)})</b>")
             for r in sorted(compra, key=lambda x: x.peg)[:5]:
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
-                lines.append(f"  • <b>{r.ticker}</b> — PEG={r.peg:.2f} {rsi}")
+                lines.append(f"  • <b>{r.ticker} - {r.name}</b> — PEG={r.peg:.2f} {rsi}")
             if len(compra) > 5:
                 lines.append(f"  … y {len(compra)-5} más (ver CSV)")
 
@@ -52,13 +52,13 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
             lines.append(f"\n🔴 <b>VENTA/CAUTELA ({len(venta)})</b>")
             for r in sorted(venta, key=lambda x: x.rsi or 0, reverse=True)[:5]:
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
-                lines.append(f"  • <b>{r.ticker}</b> — {rsi}")
+                lines.append(f"  • <b>{r.ticker} - {r.name}</b> — {rsi}")
 
         if sobrecomprada:
             lines.append(f"\n⚠️ <b>SOBRECOMPRADA ({len(sobrecomprada)})</b>")
             for r in sorted(sobrecomprada, key=lambda x: x.rsi or 0, reverse=True)[:3]:
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
-                lines.append(f"  • <b>{r.ticker}</b> — {rsi}")
+                lines.append(f"  • <b>{r.ticker} - {r.name}</b> — {rsi}")
 
     lines.append("\n<i>Ver CSV completo en GitHub Actions → Artifacts</i>")
     return "\n".join(lines)
