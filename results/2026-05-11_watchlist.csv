@@ -1,0 +1,4 @@
+ticker,name,sector,industry,price,market_cap,pe,earnings_growth_pct,peg,debt_to_equity,free_cash_flow,dividend_yield_pct,fair_value_ratio,category,passes_all,rsi,macd_histogram,price_vs_sma50,price_vs_sma200,signal,signal_reason
+SQM-B.SN,SOCIEDAD QUIMICA Y MINERA DE CH,Basic Materials,Specialty Chemicals,84016.0,23998146543616,45.71,52.3,0.874,59.155,429625760,112.0,3.594,Fast Grower,False,68.23,-14.1282,13.36,45.76,NEUTRAL,No cumple criterios Lynch. RSI=68.23
+MSFT,Microsoft Corporation,Technology,Software - Infrastructure,410.825,3051786862592,24.5,23.4,1.047,30.271,37011251200,88.0,4.547,Fast Grower,False,42.59,-1.5027,3.09,-11.44,NEUTRAL,No cumple criterios Lynch. RSI=42.59
+AAPL,Apple Inc.,Technology,Consumer Electronics,292.26,4292526735360,35.34,21.8,1.621,79.548,101090746368,37.0,1.664,Fast Grower,False,77.32,1.9541,10.96,13.65,SOBRECOMPRADA,"RSI=77.32 > 70 → cautela, posible techo"

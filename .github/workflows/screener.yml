@@ -1,0 +1,36 @@
+name: Lynch Screener
+
+on:
+  schedule:
+    # Runs Monday–Friday at 14:00 UTC (11:00 Santiago, 10:00 NY, 16:00 Madrid)
+    - cron: '0 14 * * 1-5'
+  workflow_dispatch:   # allows manual trigger from Actions tab
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Lynch screener (all markets)
+        run: python src/main.py --market all
+
+      - name: Upload results as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lynch-results-${{ github.run_id }}
+          path: results/
+          retention-days: 30

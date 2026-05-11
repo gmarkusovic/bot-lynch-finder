@@ -1,0 +1,8 @@
+{
+  "description": "Tickers en seguimiento personal. Siempre analizados independiente del screener.",
+  "tickers": [
+    "SQM-B.SN",
+    "AAPL",
+    "MSFT"
+  ]
+}
