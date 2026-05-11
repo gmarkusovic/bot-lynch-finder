@@ -1,31 +1,40 @@
 """
 Telegram bot command handler — runs via GitHub Actions cron every 5 minutes.
-Reads new messages, processes /add /remove /list /help commands,
-and updates watchlist.json in the repo via GitHub API.
+Processes /add /remove /list /check /help commands.
+/check fetches live data for a ticker and replies with full Lynch + technical analysis.
 """
 
 import os
+import sys
 import json
 import base64
+import time
 import requests
 
-TELEGRAM_TOKEN  = os.environ["TELEGRAM_BOT_TOKEN"]
+# Add src/ to path so we can import project modules
+sys.path.insert(0, os.path.dirname(__file__))
+
+from fetcher import fetch_fundamentals_lenient, fetch_history
+from criteria import apply_lynch_filters_watchlist
+from technical import compute_technical
+from signals import evaluate_signal
+
+TELEGRAM_TOKEN   = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = str(os.environ["TELEGRAM_CHAT_ID"])
-GITHUB_TOKEN    = os.environ["GITHUB_TOKEN"]
-GITHUB_REPO     = os.environ["GITHUB_REPO"]   # e.g. "gmarkusovic/bot-lynch-finder"
+GITHUB_TOKEN     = os.environ["GITHUB_TOKEN"]
+GITHUB_REPO      = os.environ["GITHUB_REPO"]
 
 _GH_HEADERS = {
     "Authorization": f"Bearer {GITHUB_TOKEN}",
     "Accept": "application/vnd.github+json",
 }
-_WATCHLIST_PATH    = "watchlist.json"
-_OFFSET_PATH       = "data/last_update_id.txt"
+_WATCHLIST_PATH = "watchlist.json"
+_OFFSET_PATH    = "data/last_update_id.txt"
 
 
 # ── GitHub API helpers ────────────────────────────────────────────────────────
 
 def _gh_get(path: str) -> tuple[str | None, str | None]:
-    """Return (decoded_content, sha) or (None, None) if file doesn't exist."""
     url  = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{path}"
     resp = requests.get(url, headers=_GH_HEADERS, timeout=10)
     if resp.status_code == 404:
@@ -87,7 +96,103 @@ def _get_updates(offset: int) -> list[dict]:
     return resp.json().get("result", [])
 
 
-# ── Command handlers ──────────────────────────────────────────────────────────
+# ── /check command ────────────────────────────────────────────────────────────
+
+def _v(val, decimals: int = 2, suffix: str = "") -> str:
+    return "—" if val is None else f"{val:.{decimals}f}{suffix}"
+
+
+def _fcf_icon(fcf) -> str:
+    if fcf is None:
+        return "—"
+    return "✅" if fcf > 0 else "❌"
+
+
+def _cmd_check(ticker: str) -> None:
+    _send(f"🔍 Analizando <b>{ticker}</b>… (puede tomar hasta 30 seg)")
+
+    data = fetch_fundamentals_lenient(ticker)
+    if data is None:
+        _send(f"❌ No se encontraron datos para <b>{ticker}</b>.\n\nVerifica que el ticker sea correcto (ej. AAPL, SQM-B.SN, MC.PA).")
+        return
+
+    result = apply_lynch_filters_watchlist(data)
+
+    hist = fetch_history(ticker)
+    if hist is not None:
+        tech = compute_technical(hist)
+        result = evaluate_signal(result, tech)
+
+    # Lynch fundamentals
+    lynch_ok = "✅ Cumple criterios Lynch" if result.passes_all else "❌ No cumple criterios Lynch"
+
+    # Criteria detail
+    peg_ok  = "✅" if result.peg and result.peg <= 1.0   else "❌"
+    pe_ok   = "✅" if result.pe  and result.pe  > 0      else "❌"
+    grw_ok  = "✅" if result.earnings_growth_pct > 0     else "❌"
+    de_ok   = ("✅" if result.debt_to_equity is not None and result.debt_to_equity < 0.5
+               else "⚠️" if result.debt_to_equity is None else "❌")
+    fcf_ok  = ("✅" if result.free_cash_flow and result.free_cash_flow > 0
+               else "❌" if result.free_cash_flow is not None else "⚠️")
+    fvr_ok  = ("✅" if result.fair_value_ratio and result.fair_value_ratio >= 1.5
+               else "❌" if result.fair_value_ratio is not None else "⚠️")
+
+    # RSI label
+    rsi = result.rsi
+    if rsi is None:
+        rsi_label = "—"
+    elif rsi < 30:
+        rsi_label = f"{rsi:.1f} 🟢 Sobreventa fuerte"
+    elif rsi < 45:
+        rsi_label = f"{rsi:.1f} 🟡 Zona favorable"
+    elif rsi < 65:
+        rsi_label = f"{rsi:.1f} ⚪ Neutral"
+    elif rsi < 70:
+        rsi_label = f"{rsi:.1f} 🟠 Zona alta"
+    else:
+        rsi_label = f"{rsi:.1f} 🔴 Sobrecomprada"
+
+    # MACD label
+    mh = result.macd_histogram
+    if mh is None:
+        macd_label = "—"
+    elif mh > 0:
+        macd_label = f"{mh:.4f} 📈 Alcista"
+    else:
+        macd_label = f"{mh:.4f} 📉 Bajista"
+
+    # SMA distances
+    sma50  = (f"{result.price_vs_sma50:+.1f}%" if result.price_vs_sma50  is not None else "—")
+    sma200 = (f"{result.price_vs_sma200:+.1f}%" if result.price_vs_sma200 is not None else "—")
+
+    signal_emoji = {
+        "COMPRA_FUERTE": "🚀", "COMPRA": "🟢", "SEGUIMIENTO": "👀",
+        "SOBRECOMPRADA": "⚠️", "VENTA": "🔴", "NEUTRAL": "⚪",
+    }.get(result.signal, "")
+
+    msg = (
+        f"<b>{result.ticker} — {result.name}</b>\n"
+        f"{signal_emoji} <b>{result.signal.replace('_', ' ')}</b> · {result.category}\n"
+        f"{lynch_ok}\n"
+        f"\n<b>📊 Criterios Peter Lynch</b>\n"
+        f"{peg_ok} PEG:          {_v(result.peg, 3)}  <i>(≤ 1.0)</i>\n"
+        f"{pe_ok} P/E:           {_v(result.pe, 1)}  <i>(> 0)</i>\n"
+        f"{grw_ok} Crec. EPS:    {_v(result.earnings_growth_pct, 1, '%')}  <i>(> 0%)</i>\n"
+        f"{de_ok} Deuda/Pat:     {_v(result.debt_to_equity, 2)}  <i>(< 0.5)</i>\n"
+        f"{fcf_ok} FCF:          {_fcf_icon(result.free_cash_flow)}  <i>(> 0)</i>\n"
+        f"{fvr_ok} FV ratio:     {_v(result.fair_value_ratio, 2)}  <i>(≥ 1.5)</i>\n"
+        f"  Div. yield:    {_v(result.dividend_yield_pct, 2, '%')}\n"
+        f"\n<b>📈 Análisis Técnico</b>\n"
+        f"  RSI (14):      {rsi_label}\n"
+        f"  MACD hist:     {macd_label}\n"
+        f"  vs SMA 50:     {sma50}\n"
+        f"  vs SMA 200:    {sma200}\n"
+        f"\n<i>↳ {result.signal_reason}</i>"
+    )
+    _send(msg)
+
+
+# ── Other command handlers ────────────────────────────────────────────────────
 
 def _cmd_add(ticker: str, tickers: list[str], wl_data: dict, wl_sha: str | None) -> list[str]:
     if ticker in tickers:
@@ -124,14 +229,16 @@ def _cmd_list(tickers: list[str]) -> None:
 def _cmd_help() -> None:
     _send(
         "🤖 <b>LynchFinder Bot — Comandos</b>\n\n"
-        "/add TICKER — agregar acción a watchlist\n"
-        "  ej: /add AAPL\n"
-        "  ej: /add SQM-B.SN\n\n"
+        "/check TICKER — análisis completo de una acción\n"
+        "  ej: /check AAPL\n"
+        "  ej: /check SQM-B.SN\n\n"
+        "/add TICKER — agregar a watchlist\n"
+        "  ej: /add AAPL\n\n"
         "/remove TICKER — eliminar de watchlist\n"
         "  ej: /remove AAPL\n\n"
-        "/list — ver todas las acciones en seguimiento\n\n"
-        "/help — mostrar este mensaje\n\n"
-        "<i>El screener corre automáticamente lunes–viernes 11:00 AM Santiago.</i>"
+        "/list — ver watchlist actual\n\n"
+        "/help — este mensaje\n\n"
+        "<i>⚠️ El bot revisa mensajes cada ~5 min.</i>"
     )
 
 
@@ -156,21 +263,26 @@ def process_commands() -> None:
         chat_id = str(msg.get("chat", {}).get("id", ""))
         text    = msg.get("text", "").strip()
 
-        # Ignore messages from unauthorized users
         if chat_id != TELEGRAM_CHAT_ID:
             continue
 
-        parts  = text.split()
-        cmd    = parts[0].lower().split("@")[0] if parts else ""
-        arg    = parts[1].upper() if len(parts) > 1 else ""
+        parts = text.split()
+        cmd   = parts[0].lower().split("@")[0] if parts else ""
+        arg   = parts[1].upper() if len(parts) > 1 else ""
 
-        if cmd == "/add":
+        if cmd == "/check":
+            if not arg:
+                _send("Uso: /check TICKER\nEjemplo: /check AAPL")
+            else:
+                _cmd_check(arg)
+
+        elif cmd == "/add":
             if not arg:
                 _send("Uso: /add TICKER\nEjemplo: /add AAPL")
             else:
                 tickers = _cmd_add(arg, tickers, wl_data, wl_sha)
                 wl_data["tickers"] = tickers
-                _, wl_sha = _load_watchlist()   # refresh sha after write
+                _, wl_sha = _load_watchlist()
 
         elif cmd in ("/remove", "/del"):
             if not arg:

@@ -3,19 +3,1056 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LynchFinder</title>
+  <title>LynchFinder — 2026-05-11</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-           background: #0d1117; color: #8b949e; display: flex; align-items: center;
-           justify-content: center; height: 100vh; margin: 0; text-align: center; }
-    h1 { color: #58a6ff; font-size: 1.4rem; margin-bottom: 8px; }
-    p  { font-size: 0.9rem; }
+            background: #0d1117; color: #c9d1d9; padding: 16px; font-size: 14px; }
+    h1   { font-size: 1.15rem; color: #58a6ff; margin-bottom: 2px; }
+    .sub { font-size: 0.78rem; color: #8b949e; margin-bottom: 14px; }
+
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tab  { padding: 6px 16px; border-radius: 20px; border: 1px solid #30363d;
+             background: #161b22; color: #c9d1d9; font-size: 0.82rem; cursor: pointer; }
+    .tab.active { background: #58a6ff; color: #0d1117; border-color: #58a6ff; font-weight: bold; }
+
+    .market { display: none; }
+
+    .card { background: #161b22; border: 1px solid #30363d; border-left: 4px solid #30363d;
+             border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+    .sig-COMPRA_FUERTE { border-left-color: #2ea043; background: #0d2818; }
+    .sig-COMPRA        { border-left-color: #3fb950; }
+    .sig-SEGUIMIENTO   { border-left-color: #58a6ff; }
+    .sig-SOBRECOMPRADA { border-left-color: #d29922; background: #1f1a0e; }
+    .sig-VENTA         { border-left-color: #f85149; background: #2d1015; }
+
+    .card-top  { display: flex; justify-content: space-between; align-items: flex-start;
+                  margin-bottom: 4px; gap: 8px; }
+    .ticker    { font-weight: 700; font-size: 1rem; margin-right: 6px; }
+    .badge     { font-size: 0.68rem; padding: 2px 8px; border-radius: 12px;
+                  font-weight: bold; white-space: nowrap; }
+    .badge-COMPRA_FUERTE { background: #2ea043; color: #fff; }
+    .badge-COMPRA        { background: #3fb950; color: #fff; }
+    .badge-SEGUIMIENTO   { background: #1f6feb; color: #fff; }
+    .badge-SOBRECOMPRADA { background: #d29922; color: #000; }
+    .badge-VENTA         { background: #f85149; color: #fff; }
+
+    .category { font-size: 0.72rem; color: #8b949e; white-space: nowrap; }
+    .company  { font-size: 0.82rem; color: #e6edf3; margin-bottom: 2px; }
+    .sector   { font-size: 0.72rem; color: #6e7681; margin-bottom: 8px; }
+
+    .metrics  { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; }
+    .metric   { display: flex; flex-direction: column; }
+    .ml       { font-size: 0.68rem; color: #8b949e; }
+    .mv       { font-size: 0.88rem; font-weight: 600; color: #e6edf3; }
+    .rsi-low  { color: #3fb950; }
+    .rsi-high { color: #f85149; }
+
+    .reason   { font-size: 0.72rem; color: #8b949e; margin-top: 4px; font-style: italic; }
+    .no-data  { color: #6e7681; font-style: italic; padding: 20px 0; }
   </style>
 </head>
 <body>
-  <div>
-    <h1>📊 LynchFinder</h1>
-    <p>El reporte se generará automáticamente<br>en el próximo run del screener.</p>
-  </div>
+  <h1>📊 LynchFinder</h1>
+  <div class="sub">Actualizado: 2026-05-11 17:06 UTC</div>
+  <div class="tabs"><button class="tab" id="t-usa" onclick="showMarket('usa')">USA</button><button class="tab" id="t-europe" onclick="showMarket('europe')">EUROPE</button><button class="tab" id="t-chile" onclick="showMarket('chile')">CHILE</button><button class="tab" id="t-watchlist" onclick="showMarket('watchlist')">WATCHLIST</button></div>
+  <div class="market" id="m-usa">
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">C</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Citigroup, Inc.</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.279</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">15.6</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">56.1%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">36.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.8213</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">15.81</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=36.48 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">YUM</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Yum! Brands, Inc.</div>
+      <div class="sector">Consumer Cyclical · Restaurants</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.335</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">24.2</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">72.2%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">32.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.8452</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">11.12</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=32.73 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">SYF</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Synchrony Financial</div>
+      <div class="sector">Financial Services · Credit Services</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.365</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">7.3</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">20.1%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">27.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.7434</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">25.08</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=27.59 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">BK</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">The Bank of New York Mellon Cor</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.390</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">16.3</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">41.8%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">33.3</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.9141</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">12.49</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=33.29 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">NTRS</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Northern Trust Corporation</div>
+      <div class="sector">Financial Services · Asset Management</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.396</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">16.9</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">42.6%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">30.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-1.2784</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">14.30</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=30.72 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">OTIS</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Otis Worldwide Corporation</div>
+      <div class="sector">Industrials · Specialty Industrial Machinery</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.466</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">19.8</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">42.6%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">34.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.1534</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">13.59</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=34.42 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">TFC</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Truist Financial Corporation</div>
+      <div class="sector">Financial Services · Banks - Regional</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.470</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.9</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">25.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">35.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3287</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">37.77</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=35.67 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">BAC</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Bank of America Corporation</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.514</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">12.6</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">24.4%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">33.0</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3517</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">19.32</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=33.0 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">PNC</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">PNC Financial Services Group, I</div>
+      <div class="sector">Financial Services · Banks - Regional</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.707</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">12.5</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">17.7%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">30.8</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-1.1273</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">26.52</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=30.82 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">WFC</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">Wells Fargo & Company</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.756</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">15.1%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">26.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.6466</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">22.17</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=26.35 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">USB</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">U.S. Bancorp</div>
+      <div class="sector">Financial Services · Banks - Regional</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.776</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.5</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">14.8%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">34.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.2615</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">33.61</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=34.36 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">JPM</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">JP Morgan Chase & Co.</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.836</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">14.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">17.2%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">34.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-1.7587</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">15.04</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=34.72 (favorable)</div>
+    </div>
+    <div class="card sig-SEGUIMIENTO" data-signal="SEGUIMIENTO">
+      <div class="card-top">
+        <div>
+          <span class="ticker">MO</span>
+          <span class="badge badge-SEGUIMIENTO">👀 SEGUIMIENTO</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Altria Group, Inc.</div>
+      <div class="sector">Consumer Defensive · Tobacco</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.135</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">14.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">106.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">60.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.0659</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">50.71</span></div>
+      </div>
+      <div class="reason">Lynch OK pero técnico neutro (RSI=60.74, MACD bajista)</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">MU</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Micron Technology, Inc.</div>
+      <div class="sector">Technology · Semiconductors</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.050</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">37.9</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">756.0%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">89.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">27.1935</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">14.90</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">20.14</span></div>
+      </div>
+      <div class="reason">RSI=89.49 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">NUE</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Nucor Corporation</div>
+      <div class="sector">Basic Materials · Steel</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.060</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">22.9</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">382.1%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">74.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.0359</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">31.59</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">20.95</span></div>
+      </div>
+      <div class="reason">RSI=74.67 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">QCOM</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">QUALCOMM Incorporated</div>
+      <div class="sector">Technology · Semiconductors</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.147</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">25.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">173.0%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">89.3</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">8.1497</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">55.98</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">13.45</span></div>
+      </div>
+      <div class="reason">RSI=89.32 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">ZM</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Zoom Communications, Inc.</div>
+      <div class="sector">Technology · Software - Application</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.189</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">17.3</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">91.5%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">73.3</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">1.1641</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">0.60</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">5.28</span></div>
+      </div>
+      <div class="reason">RSI=73.34 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">BEN</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Franklin Resources, Inc.</div>
+      <div class="sector">Financial Services · Asset Management</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.273</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">23.9</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">87.2%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">77.9</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.2003</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">23.47</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">21.48</span></div>
+      </div>
+      <div class="reason">RSI=77.86 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">GOOGL</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Alphabet Inc.</div>
+      <div class="sector">Communication Services · Internet Content & Information</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.366</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">30.0</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">82.0%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">87.3</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">3.3087</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">20.03</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.46</span></div>
+      </div>
+      <div class="reason">RSI=87.26 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">AVB</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">AvalonBay Communities, Inc.</div>
+      <div class="sector">Real Estate · REIT - Residential</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.570</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">23.0</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">40.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">75.0</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.5574</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">81.31</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">18.59</span></div>
+      </div>
+      <div class="reason">RSI=75.05 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">CVS</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">CVS Health Corporation</div>
+      <div class="sector">Healthcare · Healthcare Plans</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.640</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">40.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">63.1%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">80.2</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">1.1706</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">100.91</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">8.84</span></div>
+      </div>
+      <div class="reason">RSI=80.22 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">RS</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Reliance, Inc.</div>
+      <div class="sector">Basic Materials · Steel</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.661</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">24.1</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">36.4%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">72.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.5253</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">28.45</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">7.12</span></div>
+      </div>
+      <div class="reason">RSI=72.42 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">MDLZ</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Mondelez International, Inc.</div>
+      <div class="sector">Consumer Defensive · Confectioners</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.732</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">30.2</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">41.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">81.1</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.2402</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">83.79</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">12.12</span></div>
+      </div>
+      <div class="reason">RSI=81.08 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">ROK</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Rockwell Automation, Inc.</div>
+      <div class="sector">Industrials · Specialty Industrial Machinery</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.211</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">48.0</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">39.6%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">70.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">5.0493</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">113.37</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.37</span></div>
+      </div>
+      <div class="reason">RSI=70.54 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">CAT</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Caterpillar, Inc.</div>
+      <div class="sector">Industrials · Farm & Heavy Construction Machinery</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.514</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">45.7</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">30.2%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">72.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">4.7997</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">230.79</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.12</span></div>
+      </div>
+      <div class="reason">RSI=72.64 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">TXN</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Texas Instruments Incorporated</div>
+      <div class="sector">Technology · Semiconductors</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.599</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">50.0</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">31.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">79.2</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">1.3062</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">83.74</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">4.56</span></div>
+      </div>
+      <div class="reason">RSI=79.17 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">AAPL</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Apple Inc.</div>
+      <div class="sector">Technology · Consumer Electronics</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.615</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">35.2</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">21.8%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">75.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">1.8865</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">79.55</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.67</span></div>
+      </div>
+      <div class="reason">RSI=75.64 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">AMD</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Advanced Micro Devices, Inc.</div>
+      <div class="sector">Technology · Semiconductors</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.699</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">155.0</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">91.2%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">80.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">11.7658</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">6.00</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.59</span></div>
+      </div>
+      <div class="reason">RSI=80.74 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">PANW</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Palo Alto Networks, Inc.</div>
+      <div class="sector">Technology · Software - Infrastructure</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.944</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">117.6</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">60.5%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">79.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">3.1225</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">4.89</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.52</span></div>
+      </div>
+      <div class="reason">RSI=79.64 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">SBUX</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Starbucks Corporation</div>
+      <div class="sector">Consumer Cyclical · Restaurants</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">2.475</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">80.7</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">32.6%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">70.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.2889</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.33</span></div>
+      </div>
+      <div class="reason">RSI=70.73 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">DDOG</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Datadog, Inc.</div>
+      <div class="sector">Technology · Software - Application</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">5.057</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">525.9</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">104.0%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">88.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">7.5196</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">32.22</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.20</span></div>
+      </div>
+      <div class="reason">RSI=88.56 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">VTR</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">Ventas, Inc.</div>
+      <div class="sector">Real Estate · REIT - Healthcare Facilities</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">15.920</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">159.2</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">10.0%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">71.3</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.1509</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">93.74</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.56</span></div>
+      </div>
+      <div class="reason">RSI=71.27 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">UNH</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Slow Grower</span>
+      </div>
+      <div class="company">UnitedHealth Group Incorporated</div>
+      <div class="sector">Healthcare · Healthcare Plans</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">40.850</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">28.6</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">0.7%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">81.3</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.2026</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">73.98</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">8.17</span></div>
+      </div>
+      <div class="reason">RSI=81.33 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">TSLA</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Slow Grower</span>
+      </div>
+      <div class="company">Tesla, Inc.</div>
+      <div class="sector">Consumer Cyclical · Auto Manufacturers</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">49.526</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">411.1</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">8.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">77.0</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">6.4212</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">18.74</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.02</span></div>
+      </div>
+      <div class="reason">RSI=76.97 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-VENTA" data-signal="VENTA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">AMZN</span>
+          <span class="badge badge-VENTA">🔴 VENTA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Amazon.com, Inc.</div>
+      <div class="sector">Consumer Cyclical · Internet Retail</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.434</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">32.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">74.8%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">76.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.2472</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">53.30</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.31</span></div>
+      </div>
+      <div class="reason">RSI=76.6 (sobrecomprada) + MACD bearish → posible corrección</div>
+    </div></div><div class="market" id="m-europe">
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">SAN.MC</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">BANCO SANTANDER S.A.</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.176</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.8</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">67.4%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">44.8</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.0019</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">25.89</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=44.81 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">UBSG.SW</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">UBS GROUP N</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.191</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">16.1</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">84.4%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">69.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.0860</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">20.46</span></div>
+      </div>
+      <div class="reason">Lynch OK + MACD alcista</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">LLOY.L</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">LLOYDS BANKING GROUP PLC ORD 10</div>
+      <div class="sector">Financial Services · Banks - Regional</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.275</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">12.3</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">44.7%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">40.3</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.1957</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">33.66</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=40.32 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">UCG.MI</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">UNICREDIT</div>
+      <div class="sector">Financial Services · Banks - Regional</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.483</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">9.7</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">20.1%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">58.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.5579</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">48.08</span></div>
+      </div>
+      <div class="reason">Lynch OK + MACD alcista</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">BNP.PA</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">BNP PARIBAS ACT.A</div>
+      <div class="sector">Financial Services · Banks - Regional</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.731</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">8.8</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">12.0%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">50.9</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.1415</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">125.32</span></div>
+      </div>
+      <div class="reason">Lynch OK + MACD alcista</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">BBVA.MC</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">BANCO BILBAO VIZCAYA ARGENTARIA</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.775</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">10.3</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">13.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">39.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.0333</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">48.44</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=39.53 (favorable)</div>
+    </div>
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">INGA.AS</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Stalwart</span>
+      </div>
+      <div class="company">ING GROEP N.V.</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.857</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.7</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">13.7%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">62.8</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.1258</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">37.35</span></div>
+      </div>
+      <div class="reason">Lynch OK + MACD alcista</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">REP.MC</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">REPSOL,  S.A.</div>
+      <div class="sector">Energy · Oil & Gas Integrated</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.060</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">10.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">173.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">71.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.0802</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">49.17</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">64.53</span></div>
+      </div>
+      <div class="reason">RSI=71.37 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">PRY.MI</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">PRYSMIAN</div>
+      <div class="sector">Industrials · Electrical Equipment & Parts</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.625</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">33.4</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">53.4%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">86.0</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">2.6300</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">76.23</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.37</span></div>
+      </div>
+      <div class="reason">RSI=86.0 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">ABBN.SW</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">ABB LTD N</div>
+      <div class="sector">Industrials · Electrical Equipment & Parts</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.895</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">40.2</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">21.2%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">80.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.3927</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">59.72</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.39</span></div>
+      </div>
+      <div class="reason">RSI=80.63 > 70 → cautela, posible techo</div>
+    </div></div><div class="market" id="m-chile">
+    <div class="card sig-COMPRA" data-signal="COMPRA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">BESALCO.SN</span>
+          <span class="badge badge-COMPRA">🟢 COMPRA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">BESALCO SA</div>
+      <div class="sector">Industrials · Engineering & Construction</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.346</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.5</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">33.2%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">41.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.8939</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">0.47</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">35.59</span></div>
+      </div>
+      <div class="reason">Lynch OK + RSI=41.44 (favorable)</div>
+    </div></div><div class="market" id="m-watchlist">
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">AAPL</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Apple Inc.</div>
+      <div class="sector">Technology · Consumer Electronics</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.616</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">35.2</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">21.8%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">75.8</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">1.8916</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">79.55</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.67</span></div>
+      </div>
+      <div class="reason">RSI=75.77 > 70 → cautela, posible techo</div>
+    </div></div>
+  
+    <script>
+    function showMarket(id) {
+      document.querySelectorAll('.market').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      document.getElementById('m-' + id).style.display = 'block';
+      document.getElementById('t-' + id).classList.add('active');
+    }
+    document.addEventListener('DOMContentLoaded', () => showMarket('usa'));
+    </script>
 </body>
 </html>
