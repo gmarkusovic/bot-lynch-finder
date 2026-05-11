@@ -58,7 +58,13 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
                 lines.append(f"  • <b>{r.ticker} - {r.name}</b> — {rsi}")
 
-    lines.append("\n<i>Ver CSV completo en GitHub Actions → Artifacts</i>")
+    # GitHub Pages link — built from GITHUB_REPOSITORY env var (owner/repo)
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    if repo:
+        owner, repo_name = repo.split("/", 1)
+        pages_url = f"https://{owner}.github.io/{repo_name}/"
+        lines.append(f"\n🔗 <a href=\"{pages_url}\">Ver reporte completo</a>")
+
     return "\n".join(lines)
 
 

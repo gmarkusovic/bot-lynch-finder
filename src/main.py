@@ -19,6 +19,7 @@ from technical import compute_technical
 from signals import evaluate_signal
 from reporter import save_results, print_summary, print_watchlist_summary
 from notifier import send_telegram
+from html_reporter import save_html_report
 
 _MARKETS: dict[str, list[str]] = {
     "usa": [],
@@ -151,8 +152,10 @@ def main() -> None:
     if args.mode in ("watchlist", "all"):
         all_results.update(run_watchlist())
 
-    # Send Telegram notification with combined results
+    # Generate HTML report and send Telegram notification
     if all_results:
+        html_path = save_html_report(all_results)
+        print(f"[html] Reporte guardado → {html_path}")
         send_telegram(all_results, date.today().isoformat())
 
 
