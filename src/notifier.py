@@ -36,27 +36,25 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
 
         if compra_fuerte:
             lines.append(f"\n🚀 <b>COMPRA FUERTE ({len(compra_fuerte)})</b>")
-            for r in sorted(compra_fuerte, key=lambda x: x.peg)[:5]:
+            for r in sorted(compra_fuerte, key=lambda x: x.peg):
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
                 lines.append(f"  • <b>{r.ticker} - {r.name}</b> — PEG={r.peg:.2f} {rsi}")
 
         if compra:
             lines.append(f"\n🟢 <b>COMPRA ({len(compra)})</b>")
-            for r in sorted(compra, key=lambda x: x.peg)[:5]:
+            for r in sorted(compra, key=lambda x: x.peg):
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
                 lines.append(f"  • <b>{r.ticker} - {r.name}</b> — PEG={r.peg:.2f} {rsi}")
-            if len(compra) > 5:
-                lines.append(f"  … y {len(compra)-5} más (ver CSV)")
 
         if venta:
             lines.append(f"\n🔴 <b>VENTA/CAUTELA ({len(venta)})</b>")
-            for r in sorted(venta, key=lambda x: x.rsi or 0, reverse=True)[:5]:
+            for r in sorted(venta, key=lambda x: x.rsi or 0, reverse=True):
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
                 lines.append(f"  • <b>{r.ticker} - {r.name}</b> — {rsi}")
 
         if sobrecomprada:
             lines.append(f"\n⚠️ <b>SOBRECOMPRADA ({len(sobrecomprada)})</b>")
-            for r in sorted(sobrecomprada, key=lambda x: x.rsi or 0, reverse=True)[:3]:
+            for r in sorted(sobrecomprada, key=lambda x: x.rsi or 0, reverse=True):
                 rsi = f"RSI={r.rsi:.0f}" if r.rsi else ""
                 lines.append(f"  • <b>{r.ticker} - {r.name}</b> — {rsi}")
 
@@ -64,14 +62,49 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
     return "\n".join(lines)
 
 
+_MAX_CHARS = 4096
+
+
+def _split_message(text: str) -> list[str]:
+    """Split a message into chunks of max 4096 chars, breaking only on newlines."""
+    if len(text) <= _MAX_CHARS:
+        return [text]
+
+    chunks = []
+    current = ""
+    for line in text.split("\n"):
+        # +1 for the newline we'll re-add
+        candidate = current + line + "\n"
+        if len(candidate) > _MAX_CHARS:
+            if current:
+                chunks.append(current.rstrip("\n"))
+            current = line + "\n"
+        else:
+            current = candidate
+
+    if current.strip():
+        chunks.append(current.rstrip("\n"))
+
+    return chunks
+
+
+def _post(token: str, chat_id: str, text: str) -> bool:
+    resp = requests.post(
+        f"https://api.telegram.org/bot{token}/sendMessage",
+        json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"},
+        timeout=10,
+    )
+    return resp.ok
+
+
 def send_telegram(
     all_results: dict[str, list[LynchResult]],
     date_str: str,
 ) -> None:
     """
-    Send a Telegram message with the screening summary.
+    Send Telegram message(s) with the screening summary.
+    Splits automatically into multiple messages if content exceeds 4096 chars.
     Reads TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID from environment variables.
-    Silently does nothing if either variable is missing.
     """
     token   = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
@@ -81,16 +114,14 @@ def send_telegram(
         return
 
     message = _format_results(all_results, date_str)
+    chunks  = _split_message(message)
 
     try:
-        resp = requests.post(
-            f"https://api.telegram.org/bot{token}/sendMessage",
-            json={"chat_id": chat_id, "text": message, "parse_mode": "HTML"},
-            timeout=10,
-        )
-        if resp.ok:
-            print("[notifier] Mensaje enviado a Telegram.")
-        else:
-            print(f"[notifier] Error Telegram: {resp.status_code} — {resp.text}")
+        for i, chunk in enumerate(chunks, 1):
+            ok = _post(token, chat_id, chunk)
+            if ok:
+                print(f"[notifier] Mensaje {i}/{len(chunks)} enviado a Telegram.")
+            else:
+                print(f"[notifier] Error enviando mensaje {i}/{len(chunks)}.")
     except Exception as e:
         print(f"[notifier] No se pudo enviar a Telegram: {e}")
