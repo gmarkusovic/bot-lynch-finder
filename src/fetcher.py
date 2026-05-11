@@ -5,6 +5,16 @@ import pandas as pd
 import yfinance as yf
 
 
+def _normalize_div_yield(raw) -> float:
+    """
+    yfinance inconsistently returns dividendYield as decimal (0.0376) or
+    percentage (3.76) depending on the exchange. Normalize to decimal.
+    """
+    if not raw:
+        return 0.0
+    return raw / 100 if raw > 1.0 else raw
+
+
 def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
     """
     Return a dict of fundamental data for `ticker`, or None if data is insufficient.
@@ -33,7 +43,7 @@ def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
             "earnings_growth": growth,
             "debt_to_equity": info.get("debtToEquity"),
             "free_cash_flow": info.get("freeCashflow"),
-            "dividend_yield": info.get("dividendYield") or 0.0,
+            "dividend_yield": _normalize_div_yield(info.get("dividendYield")),
             "total_cash": info.get("totalCash"),
             "total_debt": info.get("totalDebt"),
             "trailing_eps": info.get("trailingEps"),
@@ -69,7 +79,7 @@ def fetch_fundamentals_lenient(ticker: str, sleep: float = 0.3) -> dict | None:
             "earnings_growth": growth if (growth and growth > 0) else None,
             "debt_to_equity": info.get("debtToEquity"),
             "free_cash_flow": info.get("freeCashflow"),
-            "dividend_yield": info.get("dividendYield") or 0.0,
+            "dividend_yield": _normalize_div_yield(info.get("dividendYield")),
             "total_cash": info.get("totalCash"),
             "total_debt": info.get("totalDebt"),
             "trailing_eps": info.get("trailingEps"),
