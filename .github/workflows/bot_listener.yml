@@ -1,0 +1,36 @@
+name: Telegram Bot Listener
+
+on:
+  schedule:
+    # Checks for new Telegram commands every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  listen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    permissions:
+      contents: write   # needed to update watchlist.json and offset via API
+
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+      GITHUB_TOKEN:       ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPO:        ${{ github.repository }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Process Telegram commands
+        run: python src/bot_commands.py
