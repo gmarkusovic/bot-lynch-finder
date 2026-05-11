@@ -17,16 +17,19 @@ Screener de acciones basado en **Peter Lynch** (PEG ≤ 1, EPS growth, D/E < 0.5
 
 **Pipeline de datos (izquierda → derecha):**
 ```
-universe.py ──► fetcher.py ──► criteria.py ──► technical.py ──► signals.py ──► reporter.py
+universe.py ──► fetcher.py ──► criteria.py ──► technical.py ──► signals.py ──► reporter.py ──► notifier.py
 ```
 
 | Modo | Entrada | Salida |
 |---|---|---|
 | `screener` | universo de mercado completo | CSV + `print_summary` + `print_alerts` |
 | `watchlist` | `watchlist.json` (lenient) | CSV + `print_watchlist_summary` |
-| `all` | ambos simultáneamente | ambas salidas |
+| `all` | ambos simultáneamente | ambas salidas + mensaje Telegram |
 
-Regla de responsabilidad única: `signals.py` = única fuente de verdad para señales. `reporter.py` = único lugar que imprime.
+Regla de responsabilidad única: `signals.py` = única fuente de verdad para señales. `reporter.py` = único lugar que imprime. `notifier.py` = único lugar que envía mensajes externos.
+
+**Notificaciones:** Telegram vía `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` (env vars / GitHub Secrets).
+**Watchlist desde celular:** editar `watchlist.json` directamente en la app GitHub Mobile → commit → el próximo run usa la lista actualizada.
 
 ---
 

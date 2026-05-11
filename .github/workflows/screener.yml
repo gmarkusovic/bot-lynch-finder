@@ -4,12 +4,16 @@ on:
   schedule:
     # Runs Monday–Friday at 14:00 UTC (11:00 Santiago, 10:00 NY, 16:00 Madrid)
     - cron: '0 14 * * 1-5'
-  workflow_dispatch:   # allows manual trigger from Actions tab
+  workflow_dispatch:
 
 jobs:
   screen:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
       - name: Checkout repository
@@ -25,7 +29,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Lynch screener (all markets)
-        run: python src/main.py --market all
+        run: python src/main.py --mode all --market all
 
       - name: Upload results as artifact
         if: always()

@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import date
 
 from universe import get_sp500_tickers, EUROPE_TICKERS, CHILE_TICKERS
 from fetcher import fetch_fundamentals, fetch_fundamentals_lenient, fetch_history
@@ -17,6 +18,7 @@ from criteria import apply_lynch_filters, apply_lynch_filters_watchlist, LynchRe
 from technical import compute_technical
 from signals import evaluate_signal
 from reporter import save_results, print_summary, print_watchlist_summary
+from notifier import send_telegram
 
 _MARKETS: dict[str, list[str]] = {
     "usa": [],
@@ -33,12 +35,11 @@ def _load_watchlist() -> list[str]:
             data = json.load(f)
         return data.get("tickers", [])
     except FileNotFoundError:
-        print("[watchlist] watchlist.json not found. Create it at the project root.")
+        print("[watchlist] watchlist.json not found.")
         return []
 
 
 def _process_ticker(ticker: str, lenient: bool = False) -> LynchResult | None:
-    """Fetch fundamentals + history, apply Lynch + technical, return enriched result."""
     if lenient:
         data = fetch_fundamentals_lenient(ticker)
         if data is None:
@@ -79,11 +80,12 @@ def _screen_market(tickers: list[str], market: str, lenient: bool = False) -> li
     return results
 
 
-def run_screener(markets: list[str]) -> None:
+def run_screener(markets: list[str]) -> dict[str, list[LynchResult]]:
     if "usa" in markets:
         print("[usa] Obteniendo lista S&P 500…")
         _MARKETS["usa"] = get_sp500_tickers()
 
+    all_results: dict[str, list[LynchResult]] = {}
     for market in markets:
         tickers = _MARKETS[market]
         if not tickers:
@@ -93,13 +95,16 @@ def run_screener(markets: list[str]) -> None:
         path = save_results(results, market)
         print_summary(results, market)
         print(f"[{market}] Resultados guardados → {path}")
+        all_results[market] = results
+
+    return all_results
 
 
-def run_watchlist() -> None:
+def run_watchlist() -> dict[str, list[LynchResult]]:
     tickers = _load_watchlist()
     if not tickers:
-        print("[watchlist] La watchlist está vacía. Agrega tickers a watchlist.json.")
-        return
+        print("[watchlist] La watchlist está vacía.")
+        return {}
 
     print(f"[watchlist] Analizando {len(tickers)} tickers en seguimiento…")
     results: list[LynchResult] = []
@@ -114,6 +119,8 @@ def run_watchlist() -> None:
         path = save_results(results, "watchlist")
         print_watchlist_summary(results)
         print(f"[watchlist] Resultados guardados → {path}")
+
+    return {"watchlist": results} if results else {}
 
 
 def main() -> None:
@@ -136,11 +143,17 @@ def main() -> None:
         ["usa", "europe", "chile"] if args.market == "all" else [args.market]
     )
 
+    all_results: dict[str, list[LynchResult]] = {}
+
     if args.mode in ("screener", "all"):
-        run_screener(markets)
+        all_results.update(run_screener(markets))
 
     if args.mode in ("watchlist", "all"):
-        run_watchlist()
+        all_results.update(run_watchlist())
+
+    # Send Telegram notification with combined results
+    if all_results:
+        send_telegram(all_results, date.today().isoformat())
 
 
 if __name__ == "__main__":
