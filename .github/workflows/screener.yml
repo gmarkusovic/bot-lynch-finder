@@ -2,7 +2,7 @@ name: Lynch Screener
 
 on:
   schedule:
-    # Runs Monday–Friday at 14:00 UTC (11:00 Santiago, 10:00 NY, 16:00 Madrid)
+    # Runs Monday–Friday at 15:00 UTC (11:00 Santiago CLT/UTC-4)
     - cron: '0 14 * * 1-5'
   workflow_dispatch:
 
