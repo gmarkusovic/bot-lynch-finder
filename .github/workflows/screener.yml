@@ -17,9 +17,10 @@ jobs:
       contents: write
 
     env:
-      TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      TELEGRAM_CHAT_ID:    ${{ secrets.TELEGRAM_CHAT_ID }}
-      GITHUB_REPOSITORY:   ${{ github.repository }}
+      TELEGRAM_BOT_TOKEN:               ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID:                 ${{ secrets.TELEGRAM_CHAT_ID }}
+      GITHUB_REPOSITORY:                ${{ github.repository }}
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout repository
