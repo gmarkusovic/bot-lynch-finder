@@ -14,11 +14,17 @@ import requests
 # Add src/ to path so we can import project modules
 sys.path.insert(0, os.path.dirname(__file__))
 
+import html as html_lib
+
 from fetcher import fetch_fundamentals_lenient, fetch_history
 from criteria import apply_lynch_filters_watchlist
 from technical import compute_technical
 from signals import evaluate_signal
 from utils import fmt, fcf_icon
+
+
+def _e(text: str) -> str:
+    return html_lib.escape(str(text)) if text else ""
 
 TELEGRAM_TOKEN   = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = str(os.environ["TELEGRAM_CHAT_ID"])
@@ -162,7 +168,7 @@ def _cmd_check(ticker: str) -> None:
     }.get(result.signal, "")
 
     msg = (
-        f"<b>{result.ticker} — {result.name}</b>\n"
+        f"<b>{_e(result.ticker)} — {_e(result.name)}</b>\n"
         f"{signal_emoji} <b>{result.signal.replace('_', ' ')}</b> · {result.category}\n"
         f"{lynch_ok}\n"
         f"\n<b>📊 Criterios Peter Lynch</b>\n"
@@ -178,7 +184,7 @@ def _cmd_check(ticker: str) -> None:
         f"  MACD hist:     {macd_label}\n"
         f"  vs SMA 50:     {sma50}\n"
         f"  vs SMA 200:    {sma200}\n"
-        f"\n<i>↳ {result.signal_reason}</i>"
+        f"\n<i>↳ {_e(result.signal_reason)}</i>"
     )
     _send(msg)
 

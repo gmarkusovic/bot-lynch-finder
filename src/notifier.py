@@ -1,10 +1,16 @@
 """Send Telegram notifications with full Lynch + technical detail per stock."""
 
+import html
 import os
 import requests
 
 from criteria import LynchResult
 from utils import fmt, fcf_icon, pages_url, SIGNAL_EMOJI, SIGNAL_ORDER, SHOW_SIGNALS
+
+
+def _e(text: str) -> str:
+    """Escape HTML special characters to avoid Telegram parse errors."""
+    return html.escape(str(text)) if text else ""
 
 
 def _rsi_label(rsi: float | None) -> str:
@@ -44,9 +50,9 @@ def _stock_block(r: LynchResult) -> str:
     sma200 = f"{r.price_vs_sma200:+.1f}%" if r.price_vs_sma200 is not None else "—"
 
     return (
-        f"\n<b>{r.ticker} - {r.name}</b>\n"
+        f"\n<b>{_e(r.ticker)} - {_e(r.name)}</b>\n"
         f"💲 Precio: <b>{price}</b>\n"
-        f"{emoji} <b>{r.signal.replace('_', ' ')}</b> · {r.category} · {lynch}\n"
+        f"{emoji} <b>{r.signal.replace('_', ' ')}</b> · {_e(r.category)} · {lynch}\n"
         f"<b>— Criterios Lynch —</b>\n"
         f"{peg_ok} PEG:        {fmt(r.peg, 3)}  <i>(≤ 1.0)</i>\n"
         f"{pe_ok} P/E:         {fmt(r.pe, 1)}  <i>(> 0)</i>\n"
@@ -59,7 +65,7 @@ def _stock_block(r: LynchResult) -> str:
         f"  RSI (14):    {_rsi_label(r.rsi)}\n"
         f"  MACD hist:   {_macd_label(r.macd_histogram)}\n"
         f"  vs SMA 50:   {sma50}   vs SMA 200: {sma200}\n"
-        f"<i>↳ {r.signal_reason}</i>"
+        f"<i>↳ {_e(r.signal_reason)}</i>"
     )
 
 
