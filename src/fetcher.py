@@ -12,20 +12,31 @@ def _normalize_div_yield(raw) -> float:
     """
     if not raw:
         return 0.0
-    return raw / 100 if raw > 1.0 else raw
+    return raw / 100 if raw > 1.0 else float(raw)
+
+
+def _get_growth(info: dict) -> float | None:
+    """
+    Prefer earningsGrowth over earningsQuarterlyGrowth.
+    Uses explicit None check to avoid treating 0.0 (zero growth) as missing.
+    """
+    annual = info.get("earningsGrowth")
+    if annual is not None:
+        return annual
+    return info.get("earningsQuarterlyGrowth")
 
 
 def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
     """
     Return a dict of fundamental data for `ticker`, or None if data is insufficient.
-    Sleeps `sleep` seconds after each call to avoid rate-limiting.
+    Sleeps `sleep` seconds after each call to avoid Yahoo Finance rate-limiting.
     """
     try:
         info = yf.Ticker(ticker).info
         time.sleep(sleep)
 
-        pe = info.get("trailingPE")
-        growth = info.get("earningsGrowth") or info.get("earningsQuarterlyGrowth")
+        pe     = info.get("trailingPE")
+        growth = _get_growth(info)
 
         if pe is None or growth is None:
             return None
@@ -33,20 +44,20 @@ def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
             return None
 
         return {
-            "ticker": ticker,
-            "name": info.get("shortName", ticker),
-            "sector": info.get("sector", ""),
-            "industry": info.get("industry", ""),
-            "price": info.get("currentPrice"),
-            "market_cap": info.get("marketCap"),
-            "pe": pe,
+            "ticker":        ticker,
+            "name":          info.get("shortName", ticker),
+            "sector":        info.get("sector", ""),
+            "industry":      info.get("industry", ""),
+            "price":         info.get("currentPrice"),
+            "market_cap":    info.get("marketCap"),
+            "pe":            pe,
             "earnings_growth": growth,
-            "debt_to_equity": info.get("debtToEquity"),
-            "free_cash_flow": info.get("freeCashflow"),
-            "dividend_yield": _normalize_div_yield(info.get("dividendYield")),
-            "total_cash": info.get("totalCash"),
-            "total_debt": info.get("totalDebt"),
-            "trailing_eps": info.get("trailingEps"),
+            "debt_to_equity":  info.get("debtToEquity"),
+            "free_cash_flow":  info.get("freeCashflow"),
+            "dividend_yield":  _normalize_div_yield(info.get("dividendYield")),
+            "total_cash":    info.get("totalCash"),
+            "total_debt":    info.get("totalDebt"),
+            "trailing_eps":  info.get("trailingEps"),
         }
     except Exception:
         time.sleep(sleep)
@@ -56,33 +67,33 @@ def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
 def fetch_fundamentals_lenient(ticker: str, sleep: float = 0.3) -> dict | None:
     """
     Like fetch_fundamentals but returns partial data even without PE/growth.
-    Used for watchlist mode where we want technical data regardless.
+    Used for watchlist mode where technical data is always wanted.
     """
     try:
         info = yf.Ticker(ticker).info
         time.sleep(sleep)
 
-        pe = info.get("trailingPE")
-        growth = info.get("earningsGrowth") or info.get("earningsQuarterlyGrowth")
-
         if not info.get("shortName") and not info.get("currentPrice"):
             return None
 
+        pe     = info.get("trailingPE")
+        growth = _get_growth(info)
+
         return {
-            "ticker": ticker,
-            "name": info.get("shortName", ticker),
-            "sector": info.get("sector", ""),
-            "industry": info.get("industry", ""),
-            "price": info.get("currentPrice"),
-            "market_cap": info.get("marketCap"),
-            "pe": pe if (pe and pe > 0) else None,
+            "ticker":        ticker,
+            "name":          info.get("shortName", ticker),
+            "sector":        info.get("sector", ""),
+            "industry":      info.get("industry", ""),
+            "price":         info.get("currentPrice"),
+            "market_cap":    info.get("marketCap"),
+            "pe":            pe if (pe and pe > 0) else None,
             "earnings_growth": growth if (growth and growth > 0) else None,
-            "debt_to_equity": info.get("debtToEquity"),
-            "free_cash_flow": info.get("freeCashflow"),
-            "dividend_yield": _normalize_div_yield(info.get("dividendYield")),
-            "total_cash": info.get("totalCash"),
-            "total_debt": info.get("totalDebt"),
-            "trailing_eps": info.get("trailingEps"),
+            "debt_to_equity":  info.get("debtToEquity"),
+            "free_cash_flow":  info.get("freeCashflow"),
+            "dividend_yield":  _normalize_div_yield(info.get("dividendYield")),
+            "total_cash":    info.get("totalCash"),
+            "total_debt":    info.get("totalDebt"),
+            "trailing_eps":  info.get("trailingEps"),
         }
     except Exception:
         time.sleep(sleep)
@@ -97,9 +108,10 @@ def fetch_history(ticker: str, period: str = "1y", sleep: float = 0.2) -> pd.Ser
     try:
         hist = yf.Ticker(ticker).history(period=period)
         time.sleep(sleep)
-        if hist.empty or len(hist) < 35:
+        if hist.empty:
             return None
-        return hist["Close"].dropna()
+        closes = hist["Close"].dropna()
+        return closes if len(closes) >= 35 else None
     except Exception:
         time.sleep(sleep)
         return None

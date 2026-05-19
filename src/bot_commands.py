@@ -18,6 +18,7 @@ from fetcher import fetch_fundamentals_lenient, fetch_history
 from criteria import apply_lynch_filters_watchlist
 from technical import compute_technical
 from signals import evaluate_signal
+from utils import fmt, fcf_icon
 
 TELEGRAM_TOKEN   = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = str(os.environ["TELEGRAM_CHAT_ID"])
@@ -98,16 +99,6 @@ def _get_updates(offset: int) -> list[dict]:
 
 # ── /check command ────────────────────────────────────────────────────────────
 
-def _v(val, decimals: int = 2, suffix: str = "") -> str:
-    return "—" if val is None else f"{val:.{decimals}f}{suffix}"
-
-
-def _fcf_icon(fcf) -> str:
-    if fcf is None:
-        return "—"
-    return "✅" if fcf > 0 else "❌"
-
-
 def _cmd_check(ticker: str) -> None:
     _send(f"🔍 Analizando <b>{ticker}</b>… (puede tomar hasta 30 seg)")
 
@@ -175,13 +166,13 @@ def _cmd_check(ticker: str) -> None:
         f"{signal_emoji} <b>{result.signal.replace('_', ' ')}</b> · {result.category}\n"
         f"{lynch_ok}\n"
         f"\n<b>📊 Criterios Peter Lynch</b>\n"
-        f"{peg_ok} PEG:          {_v(result.peg, 3)}  <i>(≤ 1.0)</i>\n"
-        f"{pe_ok} P/E:           {_v(result.pe, 1)}  <i>(> 0)</i>\n"
-        f"{grw_ok} Crec. EPS:    {_v(result.earnings_growth_pct, 1, '%')}  <i>(> 0%)</i>\n"
-        f"{de_ok} Deuda/Pat:     {_v(result.debt_to_equity, 2)}  <i>(< 0.5)</i>\n"
-        f"{fcf_ok} FCF:          {_fcf_icon(result.free_cash_flow)}  <i>(> 0)</i>\n"
-        f"{fvr_ok} FV ratio:     {_v(result.fair_value_ratio, 2)}  <i>(≥ 1.5)</i>\n"
-        f"  Div. yield:    {_v(result.dividend_yield_pct, 2, '%')}\n"
+        f"{peg_ok} PEG:          {fmt(result.peg, 3)}  <i>(≤ 1.0)</i>\n"
+        f"{pe_ok} P/E:           {fmt(result.pe, 1)}  <i>(> 0)</i>\n"
+        f"{grw_ok} Crec. EPS:    {fmt(result.earnings_growth_pct, 1, '%')}  <i>(> 0%)</i>\n"
+        f"{de_ok} Deuda/Pat:     {fmt(result.debt_to_equity, 2)}  <i>(< 0.5)</i>\n"
+        f"{fcf_ok} FCF:          {fcf_icon(result.free_cash_flow)}  <i>(> 0)</i>\n"
+        f"{fvr_ok} FV ratio:     {fmt(result.fair_value_ratio, 2)}  <i>(≥ 1.5)</i>\n"
+        f"  Div. yield:    {fmt(result.dividend_yield_pct, 2, '%')}\n"
         f"\n<b>📈 Análisis Técnico</b>\n"
         f"  RSI (14):      {rsi_label}\n"
         f"  MACD hist:     {macd_label}\n"

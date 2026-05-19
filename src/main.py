@@ -74,9 +74,13 @@ def _screen_market(tickers: list[str], market: str, lenient: bool = False) -> li
             done += 1
             if done % 50 == 0 or done == total:
                 print(f"[{market}] {done}/{total} procesados", flush=True)
-            result = future.result()
-            if result is not None:
-                results.append(result)
+            try:
+                result = future.result()
+                if result is not None:
+                    results.append(result)
+            except Exception as e:
+                ticker = futures[future]
+                print(f"[{market}] Error en {ticker}: {e}")
 
     return results
 

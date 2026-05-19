@@ -2,8 +2,10 @@ name: Lynch Screener
 
 on:
   schedule:
-    # Runs Monday–Friday at 14:00 UTC (11:00 Santiago, 10:00 NY, 16:00 Madrid)
-    - cron: '0 14 * * 1-5'
+    # Invierno Chile (abr–ago): UTC-4 → 15:00 UTC = 11:00 Santiago
+    - cron: '0 15 * * 1-5'
+    # Verano Chile (sep–mar):  UTC-3 → 14:00 UTC = 11:00 Santiago
+    # Cambiar a '0 14 * * 1-5' en octubre
   workflow_dispatch:
 
 jobs:
