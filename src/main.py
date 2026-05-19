@@ -9,8 +9,13 @@ Usage:
 import argparse
 import json
 import os
+import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
+
+# Force UTF-8 output on Windows (avoids crash with → ↳ and other unicode chars)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from universe import get_sp500_tickers, EUROPE_TICKERS, CHILE_TICKERS
 from fetcher import fetch_fundamentals, fetch_fundamentals_lenient, fetch_history
