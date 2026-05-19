@@ -3,21 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LynchFinder — 2026-05-18</title>
+  <title>LynchFinder — 2026-05-19</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #0d1117; color: #c9d1d9; padding: 16px; font-size: 14px; }
     h1   { font-size: 1.15rem; color: #58a6ff; margin-bottom: 2px; }
     .sub { font-size: 0.78rem; color: #8b949e; margin-bottom: 14px; }
-
     .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .tab  { padding: 6px 16px; border-radius: 20px; border: 1px solid #30363d;
              background: #161b22; color: #c9d1d9; font-size: 0.82rem; cursor: pointer; }
     .tab.active { background: #58a6ff; color: #0d1117; border-color: #58a6ff; font-weight: bold; }
-
     .market { display: none; }
-
     .card { background: #161b22; border: 1px solid #30363d; border-left: 4px solid #30363d;
              border-radius: 8px; padding: 12px; margin-bottom: 10px; }
     .sig-COMPRA_FUERTE { border-left-color: #2ea043; background: #0d2818; }
@@ -25,7 +22,6 @@
     .sig-SEGUIMIENTO   { border-left-color: #58a6ff; }
     .sig-SOBRECOMPRADA { border-left-color: #d29922; background: #1f1a0e; }
     .sig-VENTA         { border-left-color: #f85149; background: #2d1015; }
-
     .card-top  { display: flex; justify-content: space-between; align-items: flex-start;
                   margin-bottom: 4px; gap: 8px; }
     .ticker    { font-weight: 700; font-size: 1rem; margin-right: 6px; }
@@ -36,25 +32,22 @@
     .badge-SEGUIMIENTO   { background: #1f6feb; color: #fff; }
     .badge-SOBRECOMPRADA { background: #d29922; color: #000; }
     .badge-VENTA         { background: #f85149; color: #fff; }
-
     .category { font-size: 0.72rem; color: #8b949e; white-space: nowrap; }
     .company  { font-size: 0.82rem; color: #e6edf3; margin-bottom: 2px; }
     .sector   { font-size: 0.72rem; color: #6e7681; margin-bottom: 8px; }
-
     .metrics  { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; }
     .metric   { display: flex; flex-direction: column; }
     .ml       { font-size: 0.68rem; color: #8b949e; }
     .mv       { font-size: 0.88rem; font-weight: 600; color: #e6edf3; }
     .rsi-low  { color: #3fb950; }
     .rsi-high { color: #f85149; }
-
     .reason   { font-size: 0.72rem; color: #8b949e; margin-top: 4px; font-style: italic; }
     .no-data  { color: #6e7681; font-style: italic; padding: 20px 0; }
   </style>
 </head>
 <body>
   <h1>📊 LynchFinder</h1>
-  <div class="sub">Actualizado: 2026-05-18 19:19 UTC</div>
+  <div class="sub">Actualizado: 2026-05-19 15:14 UTC</div>
   <div class="tabs"><button class="tab" id="t-usa" onclick="showMarket('usa')">USA</button><button class="tab" id="t-chile" onclick="showMarket('chile')">CHILE</button><button class="tab" id="t-watchlist" onclick="showMarket('watchlist')">WATCHLIST</button></div>
   <div class="market" id="m-usa">
     <div class="card sig-COMPRA" data-signal="COMPRA">
@@ -68,13 +61,16 @@
       <div class="company">Altria Group, Inc.</div>
       <div class="sector">Consumer Defensive · Tobacco</div>
       <div class="metrics">
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$73.71</span></div>
         <div class="metric"><span class="ml">PEG</span><span class="mv">0.145</span></div>
         <div class="metric"><span class="ml">P/E</span><span class="mv">15.4</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">106.3%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">65.6</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">0.2540</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">65.0</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.2819</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">7.29</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">7.28</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">5.75%</span></div>
       </div>
       <div class="reason">Lynch OK + MACD alcista</div>
     </div>
@@ -89,15 +85,18 @@
       <div class="company">Citigroup, Inc.</div>
       <div class="sector">Financial Services · Banks - Diversified</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.270</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">15.2</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$120.50</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.266</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">14.9</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">56.1%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">34.1</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-1.0670</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">32.1</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-1.1905</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.83</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.90</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.96%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=34.07 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=32.12 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -110,15 +109,18 @@
       <div class="company">Yum! Brands, Inc.</div>
       <div class="sector">Consumer Cyclical · Restaurants</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.342</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">24.7</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$152.64</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.341</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">24.6</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">72.2%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv ">43.7</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.4913</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">36.2</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3112</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
         <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.01</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.97%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=43.72 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=36.22 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -131,15 +133,18 @@
       <div class="company">Synchrony Financial</div>
       <div class="sector">Financial Services · Credit Services</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.366</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">7.3</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$69.92</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.360</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">7.2</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">20.1%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">32.4</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.6514</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">32.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.6388</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.96</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.01</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.69%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=32.42 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=32.53 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -152,15 +157,18 @@
       <div class="company">Otis Worldwide Corporation</div>
       <div class="sector">Industrials · Specialty Industrial Machinery</div>
       <div class="metrics">
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$71.37</span></div>
         <div class="metric"><span class="ml">PEG</span><span class="mv">0.446</span></div>
         <div class="metric"><span class="ml">P/E</span><span class="mv">19.0</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">42.6%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">28.6</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3594</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">30.0</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3365</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
         <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.37</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">2.39%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=28.64 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=29.98 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -173,15 +181,18 @@
       <div class="company">Truist Financial Corporation</div>
       <div class="sector">Financial Services · Banks - Regional</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.460</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">11.7</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$46.91</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.459</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.6</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">25.3%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">30.7</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.4452</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">31.9</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.4086</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.55</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.56</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">4.42%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=30.67 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=31.89 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -194,15 +205,18 @@
       <div class="company">Bank of America Corporation</div>
       <div class="sector">Financial Services · Banks - Diversified</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.516</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$50.84</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.517</span></div>
         <div class="metric"><span class="ml">P/E</span><span class="mv">12.6</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">24.4%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv ">39.2</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3934</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">38.2</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3148</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.12</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.11</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">2.21%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=39.21 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=38.16 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -215,15 +229,18 @@
       <div class="company">PNC Financial Services Group, I</div>
       <div class="sector">Financial Services · Banks - Regional</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.703</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$213.81</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.702</span></div>
         <div class="metric"><span class="ml">P/E</span><span class="mv">12.4</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">17.7%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv ">40.5</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-1.1998</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">42.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-1.0480</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
         <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.68</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">3.18%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=40.47 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=42.48 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -236,15 +253,18 @@
       <div class="company">U.S. Bancorp</div>
       <div class="sector">Financial Services · Banks - Regional</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.758</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$53.33</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.755</span></div>
         <div class="metric"><span class="ml">P/E</span><span class="mv">11.2</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">14.8%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">33.4</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.4018</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">32.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3680</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
         <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.67</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">3.85%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=33.42 (favorable)</div>
+      <div class="reason">Lynch OK + RSI=32.51 (favorable)</div>
     </div>
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -257,36 +277,18 @@
       <div class="company">Wells Fargo & Company</div>
       <div class="sector">Financial Services · Banks - Diversified</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.762</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">11.5</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$75.18</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.770</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">11.6</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">15.1%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">29.8</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.5570</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-low">32.8</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.3880</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.52</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.51</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">2.42%</span></div>
       </div>
-      <div class="reason">Lynch OK + RSI=29.8 (favorable)</div>
-    </div>
-    <div class="card sig-SEGUIMIENTO" data-signal="SEGUIMIENTO">
-      <div class="card-top">
-        <div>
-          <span class="ticker">BK</span>
-          <span class="badge badge-SEGUIMIENTO">👀 SEGUIMIENTO</span>
-        </div>
-        <span class="category">Fast Grower</span>
-      </div>
-      <div class="company">The Bank of New York Mellon Cor</div>
-      <div class="sector">Financial Services · Banks - Diversified</div>
-      <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.405</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">16.9</span></div>
-        <div class="metric"><span class="ml">Crec.</span><span class="mv">41.8%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv ">58.1</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.1508</span></div>
-        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.56</span></div>
-      </div>
-      <div class="reason">Lynch OK pero técnico neutro (RSI=58.08, MACD bajista)</div>
+      <div class="reason">Lynch OK + RSI=32.75 (favorable)</div>
     </div>
     <div class="card sig-SEGUIMIENTO" data-signal="SEGUIMIENTO">
       <div class="card-top">
@@ -299,36 +301,114 @@
       <div class="company">Northern Trust Corporation</div>
       <div class="sector">Financial Services · Asset Management</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.407</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">17.3</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$164.44</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.404</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">17.2</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">42.6%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv ">46.5</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.6064</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">49.0</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.5702</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.59</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.94%</span></div>
+      </div>
+      <div class="reason">Lynch OK pero técnico neutro (RSI=48.97, MACD bajista)</div>
+    </div>
+    <div class="card sig-SEGUIMIENTO" data-signal="SEGUIMIENTO">
+      <div class="card-top">
+        <div>
+          <span class="ticker">BK</span>
+          <span class="badge badge-SEGUIMIENTO">👀 SEGUIMIENTO</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">The Bank of New York Mellon Cor</div>
+      <div class="sector">Financial Services · Banks - Diversified</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$136.05</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.404</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">16.9</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">41.8%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">60.5</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.1170</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
         <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.57</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">—</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.55%</span></div>
       </div>
-      <div class="reason">Lynch OK pero técnico neutro (RSI=46.52, MACD bajista)</div>
+      <div class="reason">Lynch OK pero técnico neutro (RSI=60.49, MACD bajista)</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
         <div>
-          <span class="ticker">BEN</span>
+          <span class="ticker">ALL</span>
           <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
         </div>
         <span class="category">Fast Grower</span>
       </div>
-      <div class="company">Franklin Resources, Inc.</div>
-      <div class="sector">Financial Services · Asset Management</div>
+      <div class="company">Allstate Corporation (The)</div>
+      <div class="sector">Financial Services · Insurance - Property & Casualty</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.281</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">24.5</span></div>
-        <div class="metric"><span class="ml">Crec.</span><span class="mv">87.2%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">73.9</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">0.0708</span></div>
-        <div class="metric"><span class="ml">D/E</span><span class="mv">23.47</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.73</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$226.70</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.015</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">5.0</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">338.4%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">74.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.6346</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">23.72</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">67.84</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.95%</span></div>
       </div>
-      <div class="reason">RSI=73.94 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=74.65 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">LLY</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Eli Lilly and Company</div>
+      <div class="sector">Healthcare · Drug Manufacturers - General</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$1,014.80</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.212</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">36.0</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">169.9%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">77.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">6.9708</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">139.01</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">6.66</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">70.00%</span></div>
+      </div>
+      <div class="reason">RSI=77.73 > 70 → cautela, posible techo</div>
+    </div>
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
+      <div class="card-top">
+        <div>
+          <span class="ticker">OKTA</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
+        </div>
+        <span class="category">Fast Grower</span>
+      </div>
+      <div class="company">Okta, Inc.</div>
+      <div class="sector">Technology · Software - Infrastructure</div>
+      <div class="metrics">
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$88.22</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.394</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">67.3</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">170.8%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">70.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">1.0223</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">6.44</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">2.54</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">0.00%</span></div>
+      </div>
+      <div class="reason">RSI=70.72 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -341,15 +421,18 @@
       <div class="company">CVS Health Corporation</div>
       <div class="sector">Healthcare · Healthcare Plans</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.666</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">42.0</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$94.49</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.657</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">41.4</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">63.1%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">78.8</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">1.1223</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">71.7</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.7912</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">100.91</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.57</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.59</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">2.77%</span></div>
       </div>
-      <div class="reason">RSI=78.75 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=71.66 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -362,15 +445,18 @@
       <div class="company">Cisco Systems, Inc.</div>
       <div class="sector">Technology · Communication Equipment</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">1.060</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">39.3</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$115.38</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.037</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">38.5</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">37.1%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">92.0</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">2.5556</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">83.9</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">2.3733</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">64.06</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.98</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.00</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.41%</span></div>
       </div>
-      <div class="reason">RSI=92.04 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=83.89 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -383,15 +469,18 @@
       <div class="company">Costco Wholesale Corporation</div>
       <div class="sector">Consumer Defensive · Discount Stores</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">1.233</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">56.1</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$1,090.05</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.243</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">56.6</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">45.5%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">77.5</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">6.1876</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">78.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">7.9516</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">60.26</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.81</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.78</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">55.00%</span></div>
       </div>
-      <div class="reason">RSI=77.51 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=78.63 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -404,15 +493,18 @@
       <div class="company">Coca-Cola Company (The)</div>
       <div class="sector">Consumer Defensive · Beverages - Non-Alcoholic</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">1.406</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">25.6</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$82.21</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.420</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">25.9</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">18.2%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">75.1</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">0.2966</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">76.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.3357</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">124.94</span></div>
         <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.81</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">2.61%</span></div>
       </div>
-      <div class="reason">RSI=75.06 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=76.42 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -425,15 +517,18 @@
       <div class="company">Apple Inc.</div>
       <div class="sector">Technology · Consumer Electronics</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">1.648</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">35.9</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$297.34</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.653</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">36.0</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">21.8%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">80.4</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">1.3029</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">82.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.9449</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">79.55</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.61</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.60</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">36.00%</span></div>
       </div>
-      <div class="reason">RSI=80.41 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=82.63 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -446,36 +541,18 @@
       <div class="company">Palo Alto Networks, Inc.</div>
       <div class="sector">Technology · Software - Infrastructure</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">2.272</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">137.4</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$246.10</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">2.247</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">136.0</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">60.5%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">95.7</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">5.8732</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">93.8</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">5.4909</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">4.89</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.44</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.45</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">0.00%</span></div>
       </div>
-      <div class="reason">RSI=95.73 > 70 → cautela, posible techo</div>
-    </div>
-    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
-      <div class="card-top">
-        <div>
-          <span class="ticker">SBUX</span>
-          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
-        </div>
-        <span class="category">Fast Grower</span>
-      </div>
-      <div class="company">Starbucks Corporation</div>
-      <div class="sector">Consumer Cyclical · Restaurants</div>
-      <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">2.486</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">81.0</span></div>
-        <div class="metric"><span class="ml">Crec.</span><span class="mv">32.6%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">75.5</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">0.0497</span></div>
-        <div class="metric"><span class="ml">D/E</span><span class="mv">—</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.43</span></div>
-      </div>
-      <div class="reason">RSI=75.45 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=93.83 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -488,57 +565,42 @@
       <div class="company">Datadog, Inc.</div>
       <div class="sector">Technology · Software - Application</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">4.988</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">518.8</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$211.84</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">5.092</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">529.6</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">104.0%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">89.5</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">5.2362</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">90.1</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">4.5695</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">32.22</span></div>
         <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.20</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">0.00%</span></div>
       </div>
-      <div class="reason">RSI=89.5 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=90.09 > 70 → cautela, posible techo</div>
     </div>
-    <div class="card sig-VENTA" data-signal="VENTA">
+    <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
         <div>
-          <span class="ticker">GOOGL</span>
-          <span class="badge badge-VENTA">🔴 VENTA</span>
+          <span class="ticker">NOW</span>
+          <span class="badge badge-SOBRECOMPRADA">⚠️ SOBRECOMPRADA</span>
         </div>
-        <span class="category">Fast Grower</span>
+        <span class="category">Slow Grower</span>
       </div>
-      <div class="company">Alphabet Inc.</div>
-      <div class="sector">Communication Services · Internet Content & Information</div>
+      <div class="company">ServiceNow, Inc.</div>
+      <div class="sector">Technology · Software - Application</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.371</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">30.4</span></div>
-        <div class="metric"><span class="ml">Crec.</span><span class="mv">82.0%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">76.2</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.2305</span></div>
-        <div class="metric"><span class="ml">D/E</span><span class="mv">20.03</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.42</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$105.40</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">27.277</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">62.7</span></div>
+        <div class="metric"><span class="ml">Crec.</span><span class="mv">2.3%</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">72.1</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">2.0272</span></div>
+        <div class="metric"><span class="ml">D/E</span><span class="mv">20.73</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.04</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">0.00%</span></div>
       </div>
-      <div class="reason">RSI=76.23 (sobrecomprada) + MACD bearish → posible corrección</div>
-    </div>
-    <div class="card sig-VENTA" data-signal="VENTA">
-      <div class="card-top">
-        <div>
-          <span class="ticker">MDLZ</span>
-          <span class="badge badge-VENTA">🔴 VENTA</span>
-        </div>
-        <span class="category">Fast Grower</span>
-      </div>
-      <div class="company">Mondelez International, Inc.</div>
-      <div class="sector">Consumer Defensive · Confectioners</div>
-      <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.738</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">30.5</span></div>
-        <div class="metric"><span class="ml">Crec.</span><span class="mv">41.3%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">71.4</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.0333</span></div>
-        <div class="metric"><span class="ml">D/E</span><span class="mv">83.79</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.46</span></div>
-      </div>
-      <div class="reason">RSI=71.37 (sobrecomprada) + MACD bearish → posible corrección</div>
+      <div class="reason">RSI=72.14 > 70 → cautela, posible techo</div>
     </div>
     <div class="card sig-VENTA" data-signal="VENTA">
       <div class="card-top">
@@ -551,15 +613,18 @@
       <div class="company">Texas Instruments Incorporated</div>
       <div class="sector">Technology · Semiconductors</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">1.625</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">50.9</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$296.86</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.618</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">50.7</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">31.3%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">73.9</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.1570</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">72.1</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">-0.8284</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">83.74</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.65</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">0.66</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">1.89%</span></div>
       </div>
-      <div class="reason">RSI=73.93 (sobrecomprada) + MACD bearish → posible corrección</div>
+      <div class="reason">RSI=72.11 (sobrecomprada) + MACD bearish → posible corrección</div>
     </div></div><div class="market" id="m-chile">
     <div class="card sig-COMPRA" data-signal="COMPRA">
       <div class="card-top">
@@ -572,13 +637,16 @@
       <div class="company">BESALCO SA</div>
       <div class="sector">Industrials · Engineering & Construction</div>
       <div class="metrics">
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$1,255.00</span></div>
         <div class="metric"><span class="ml">PEG</span><span class="mv">0.356</span></div>
         <div class="metric"><span class="ml">P/E</span><span class="mv">11.8</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">33.2%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv ">49.3</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">1.2960</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv ">50.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">1.5193</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">0.47</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.13</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">3.12</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">3.69%</span></div>
       </div>
       <div class="reason">Lynch OK + MACD alcista</div>
     </div>
@@ -593,15 +661,18 @@
       <div class="company">ANTARCHILE SA</div>
       <div class="sector">Industrials · Conglomerates</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">0.274</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">9.0</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$8,800.00</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">0.265</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">8.7</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">32.9%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">77.0</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">41.2999</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">75.6</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">79.4191</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">84.35</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">4.09</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">4.16</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">❌</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">3.45%</span></div>
       </div>
-      <div class="reason">RSI=76.95 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=75.64 > 70 → cautela, posible techo</div>
     </div></div><div class="market" id="m-watchlist">
     <div class="card sig-SOBRECOMPRADA" data-signal="SOBRECOMPRADA">
       <div class="card-top">
@@ -614,18 +685,20 @@
       <div class="company">Apple Inc.</div>
       <div class="sector">Technology · Consumer Electronics</div>
       <div class="metrics">
-        <div class="metric"><span class="ml">PEG</span><span class="mv">1.648</span></div>
-        <div class="metric"><span class="ml">P/E</span><span class="mv">35.9</span></div>
+        <div class="metric"><span class="ml">Precio</span><span class="mv">$297.21</span></div>
+        <div class="metric"><span class="ml">PEG</span><span class="mv">1.653</span></div>
+        <div class="metric"><span class="ml">P/E</span><span class="mv">36.0</span></div>
         <div class="metric"><span class="ml">Crec.</span><span class="mv">21.8%</span></div>
-        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">80.4</span></div>
-        <div class="metric"><span class="ml">MACD</span><span class="mv">1.3036</span></div>
+        <div class="metric"><span class="ml">RSI</span><span class="mv rsi-high">82.4</span></div>
+        <div class="metric"><span class="ml">MACD</span><span class="mv">0.9366</span></div>
         <div class="metric"><span class="ml">D/E</span><span class="mv">79.55</span></div>
-        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.61</span></div>
+        <div class="metric"><span class="ml">FV ratio</span><span class="mv">1.60</span></div>
+        <div class="metric"><span class="ml">FCF</span><span class="mv">✅</span></div>
+        <div class="metric"><span class="ml">Div.</span><span class="mv">36.00%</span></div>
       </div>
-      <div class="reason">RSI=80.43 > 70 → cautela, posible techo</div>
+      <div class="reason">RSI=82.38 > 70 → cautela, posible techo</div>
     </div></div>
-  
-    <script>
+  <script>
     function showMarket(id) {
       document.querySelectorAll('.market').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
@@ -633,6 +706,6 @@
       document.getElementById('t-' + id).classList.add('active');
     }
     document.addEventListener('DOMContentLoaded', () => showMarket('usa'));
-    </script>
+  </script>
 </body>
 </html>
