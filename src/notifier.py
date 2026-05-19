@@ -1,16 +1,10 @@
 """Send Telegram notifications with full Lynch + technical detail per stock."""
 
-import html
 import os
 import requests
 
 from criteria import LynchResult
 from utils import fmt, fcf_icon, pages_url, SIGNAL_EMOJI, SIGNAL_ORDER, SHOW_SIGNALS
-
-
-def _e(text: str) -> str:
-    """Escape HTML special characters to avoid Telegram parse errors."""
-    return html.escape(str(text)) if text else ""
 
 
 def _rsi_label(rsi: float | None) -> str:
@@ -50,27 +44,27 @@ def _stock_block(r: LynchResult) -> str:
     sma200 = f"{r.price_vs_sma200:+.1f}%" if r.price_vs_sma200 is not None else "—"
 
     return (
-        f"\n<b>{_e(r.ticker)} - {_e(r.name)}</b>\n"
-        f"💲 Precio: <b>{price}</b>\n"
-        f"{emoji} <b>{r.signal.replace('_', ' ')}</b> · {_e(r.category)} · {lynch}\n"
-        f"<b>— Criterios Lynch —</b>\n"
-        f"{peg_ok} PEG:        {fmt(r.peg, 3)}  <i>(≤ 1.0)</i>\n"
-        f"{pe_ok} P/E:         {fmt(r.pe, 1)}  <i>(> 0)</i>\n"
-        f"{grw_ok} Crec. EPS:  {fmt(r.earnings_growth_pct, 1, '%')}  <i>(> 0%)</i>\n"
-        f"{de_ok} Deuda/Pat:   {fmt(r.debt_to_equity, 2)}  <i>(< 0.5)</i>\n"
-        f"{fcf_ok} FCF:        {fcf_icon(r.free_cash_flow)}  <i>(> 0)</i>\n"
-        f"{fvr_ok} FV ratio:   {fmt(r.fair_value_ratio, 2)}  <i>(≥ 1.5)</i>\n"
-        f"   Div. yield:  {fmt(r.dividend_yield_pct, 2, '%')}\n"
-        f"<b>— Técnico —</b>\n"
-        f"  RSI (14):    {_rsi_label(r.rsi)}\n"
-        f"  MACD hist:   {_macd_label(r.macd_histogram)}\n"
-        f"  vs SMA 50:   {sma50}   vs SMA 200: {sma200}\n"
-        f"<i>↳ {_e(r.signal_reason)}</i>"
+        f"\n{r.ticker} - {r.name}\n"
+        f"💲 Precio: {price}\n"
+        f"{emoji} {r.signal.replace('_', ' ')} · {r.category} · {lynch}\n"
+        f"— Criterios Lynch —\n"
+        f"{peg_ok} PEG:       {fmt(r.peg, 3)}  (<=1.0)\n"
+        f"{pe_ok} P/E:        {fmt(r.pe, 1)}  (>0)\n"
+        f"{grw_ok} Crec.EPS: {fmt(r.earnings_growth_pct, 1, '%')}  (>0%)\n"
+        f"{de_ok} Deuda/Pat: {fmt(r.debt_to_equity, 2)}  (<0.5)\n"
+        f"{fcf_ok} FCF:       {fcf_icon(r.free_cash_flow)}  (>0)\n"
+        f"{fvr_ok} FV ratio:  {fmt(r.fair_value_ratio, 2)}  (>=1.5)\n"
+        f"   Div. yield: {fmt(r.dividend_yield_pct, 2, '%')}\n"
+        f"— Tecnico —\n"
+        f"  RSI(14):   {_rsi_label(r.rsi)}\n"
+        f"  MACD hist: {_macd_label(r.macd_histogram)}\n"
+        f"  SMA50: {sma50}  SMA200: {sma200}\n"
+        f">> {r.signal_reason}"
     )
 
 
 def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) -> str:
-    lines = [f"<b>📊 LynchFinder — {date_str}</b>"]
+    lines = [f"📊 LynchFinder — {date_str}"]
 
     for market, results in all_results.items():
         if not results:
@@ -86,17 +80,17 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
         for r in visible:
             by_signal[r.signal].append(r)
 
-        lines.append(f"\n<b>{'═'*20} {market.upper()} {'═'*20}</b>")
+        lines.append(f"\n{'='*22} {market.upper()} {'='*22}")
 
         for signal in SIGNAL_ORDER:
             group = sorted(by_signal[signal], key=lambda r: r.peg if r.peg else 99)
             if not group:
                 continue
             emoji = SIGNAL_EMOJI.get(signal, "")
-            lines.append(f"\n{emoji} <b>{signal.replace('_', ' ')} ({len(group)})</b>")
+            lines.append(f"\n{emoji} {signal.replace('_', ' ')} ({len(group)})")
             for r in group:
                 lines.append(_stock_block(r))
-                lines.append("─" * 30)
+                lines.append("-" * 32)
 
     url = pages_url()
     if url:
@@ -131,11 +125,11 @@ def _post(token: str, chat_id: str, text: str) -> bool:
     try:
         resp = requests.post(
             f"https://api.telegram.org/bot{token}/sendMessage",
-            json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"},
+            json={"chat_id": chat_id, "text": text},
             timeout=10,
         )
         if not resp.ok:
-            print(f"[notifier] Telegram rechazó el mensaje: {resp.status_code} — {resp.text[:500]}")
+            print(f"[notifier] Telegram error: {resp.status_code} — {resp.text[:300]}")
         return resp.ok
     except Exception as e:
         print(f"[notifier] Excepción al enviar: {e}")
