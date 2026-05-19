@@ -134,8 +134,11 @@ def _post(token: str, chat_id: str, text: str) -> bool:
             json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"},
             timeout=10,
         )
+        if not resp.ok:
+            print(f"[notifier] Telegram rechazó el mensaje: {resp.status_code} — {resp.text[:500]}")
         return resp.ok
-    except Exception:
+    except Exception as e:
+        print(f"[notifier] Excepción al enviar: {e}")
         return False
 
 
@@ -151,7 +154,10 @@ def send_telegram(all_results: dict[str, list[LynchResult]], date_str: str) -> N
         print("[notifier] TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID no configurados — omitiendo.")
         return
 
-    chunks = _split_message(_format_results(all_results, date_str))
+    message = _format_results(all_results, date_str)
+    chunks  = _split_message(message)
+    print(f"[notifier] Enviando {len(chunks)} mensaje(s), total {len(message)} chars.")
+
     for i, chunk in enumerate(chunks, 1):
         ok = _post(token, chat_id, chunk)
         print(f"[notifier] Mensaje {i}/{len(chunks)} {'enviado' if ok else 'ERROR'}.")
