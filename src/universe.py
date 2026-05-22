@@ -3,14 +3,42 @@
 import requests
 import pandas as pd
 
-# Chilean IPSA index (~30 largest companies on Bolsa de Santiago)
+# All publicly traded companies on the Bolsa de Santiago available via Yahoo Finance.
+# Tickers without sufficient yfinance data are silently skipped by the screener.
 CHILE_TICKERS: list[str] = [
+    # IPSA — large caps (30)
     "SQM-B.SN", "CMPC.SN", "FALABELLA.SN", "COPEC.SN", "BSANTANDER.SN",
     "BCI.SN", "ENELAM.SN", "CENCOSUD.SN", "CCU.SN", "ENELCHILE.SN",
     "CHILE.SN", "COLBUN.SN", "ITAUCL.SN", "RIPLEY.SN", "PARAUCO.SN",
     "AGUAS-A.SN", "SECURITY.SN", "BICE.SN", "SONDA.SN", "LTM.SN",
     "CONCHA.SN", "SALFACORP.SN", "CAP.SN", "FORUS.SN", "ECL.SN",
     "VAPORES.SN", "ANTARCHILE.SN", "BESALCO.SN", "NUEVAPOLAR.SN", "SMU.SN",
+    # Banca y financiero
+    "BICECORP.SN",
+    # Energía y utilities
+    "GENER.SN", "GASCO.SN", "METROGAS.SN", "ESVAL.SN", "SAESA.SN",
+    "EDELMAG.SN", "FRONTEL.SN",
+    # Minería y recursos naturales
+    "SQM-A.SN", "ENAEX.SN", "MOLYMET.SN", "PUCOBRE.SN", "MANTOS.SN",
+    # Telecom y tecnología
+    "ENTEL.SN",
+    # Retail y consumo
+    "HITES.SN", "EMPRESAS-B.SN",
+    # Alimentos y bebidas
+    "ANDINA-A.SN", "ANDINA-B.SN", "EMBONOR-A.SN", "EMBONOR-B.SN",
+    "CAROZZI.SN", "WATTS.SN",
+    # Forestal e industrial
+    "MASISA.SN", "CINTAC.SN", "SIGDO.SN", "CEMENTOS.SN",
+    # Construcción e inmobiliario
+    "MELLAFE.SN", "INGEVEC.SN", "SOCOVESA.SN", "ALMAGRO.SN", "PILMAIQUEN.SN",
+    # Conglomerados y holdings
+    "QUINENCO.SN", "IAM.SN", "ILC.SN",
+    # Salud
+    "REDSALUD.SN", "BSMED.SN",
+    # Acuicultura y pesca
+    "MULTIEXPORT.SN", "CAMANCHACA.SN", "AUSTRALIS.SN",
+    # Transporte y logística
+    "TRANS.SN",
 ]
 
 # Representative European stocks from STOXX 600 — major caps across key countries
