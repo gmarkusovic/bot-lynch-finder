@@ -2,10 +2,10 @@ name: Lynch Screener
 
 on:
   schedule:
-    # Invierno Chile (abr–ago): UTC-4 → 15:00 UTC = 11:00 Santiago
-    - cron: '0 15 * * 1-5'
-    # Verano Chile (sep–mar):  UTC-3 → 14:00 UTC = 11:00 Santiago
-    # Cambiar a '0 14 * * 1-5' en octubre
+    # 14:47 UTC evita el peak de :00 → llega ~11:00 AM Santiago (UTC-4 invierno)
+    # Invierno Chile (abr–ago): UTC-4 → 14:47 UTC = ~11:00 Santiago
+    - cron: '47 14 * * 1-5'
+    # Verano Chile (sep–mar):  UTC-3 → cambiar a '47 13 * * 1-5'
   workflow_dispatch:
 
 jobs:
