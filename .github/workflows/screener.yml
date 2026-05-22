@@ -19,6 +19,7 @@ jobs:
     env:
       TELEGRAM_BOT_TOKEN:               ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID:                 ${{ secrets.TELEGRAM_CHAT_ID }}
+      CMF_API_KEY:                      ${{ secrets.CMF_API_KEY }}
       GITHUB_REPOSITORY:                ${{ github.repository }}
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
