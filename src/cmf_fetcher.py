@@ -1,1 +1,162 @@
-"""\nFundamental data for Chilean stocks from CMF (Comisión para el Mercado Financiero).\n\nRequires CMF_API_KEY environment variable.\nFree registration at: https://api.cmfchile.cl/\n\nReturns earnings_growth, debt_to_equity, free_cash_flow to augment yfinance data.\nOnly covers tickers with a known RUT mapping (IPSA stocks).\n"""\n\nimport os\nimport time\nimport requests\n\n_API_BASE = "https://api.cmfchile.cl/api-sbifv3/recursos_api"\n\n# Nemotécnico (sin .SN) → RUT chileno\n_TICKER_TO_RUT: dict[str, str] = {\n    "SQM-B":      "93007000-9",\n    "SQM-A":      "93007000-9",\n    "CHILE":      "97004000-5",\n    "FALABELLA":  "81463600-0",\n    "COPEC":      "99520000-7",\n    "ENELAM":     "91081000-6",\n    "CENCOSUD":   "93834000-1",\n    "BSANTANDER": "97036000-K",\n    "ENELCHILE":  "99527000-5",\n    "CMPC":       "93272000-9",\n    "BCI":        "97006000-6",\n    "LTM":        "89862200-2",\n    "COLBUN":     "96505760-9",\n    "RIPLEY":     "76518760-1",\n    "SECURITY":   "90590000-9",\n    "AGUAS-A":    "90290000-6",\n    "IAM":        "76075488-0",\n    "PARAUCO":    "89836400-9",\n    "ITAUCL":     "76645030-K",\n    "SONDA":      "96507290-9",\n    "CCU":        "91705000-6",\n    "ENTEL":      "92580000-7",\n    "SMU":        "76045760-K",\n    "FORUS":      "79613480-2",\n    "HITES":      "79575680-K",\n}\n\n\ndef _rut(ticker: str) -> str | None:\n    return _TICKER_TO_RUT.get(ticker.removesuffix(".SN").upper())\n\n\ndef _get(rut: str, api_key: str) -> dict | None:\n    try:\n        resp = requests.get(\n            f"{_API_BASE}/empresas/{rut}/estados_financieros",\n            params={"apikey": api_key, "formato": "json"},\n            timeout=15,\n        )\n        time.sleep(0.3)\n        return resp.json() if resp.ok else None\n    except Exception:\n        time.sleep(0.3)\n        return None\n\n\ndef _num(d: dict | None, *keys: str) -> float | None:\n    """Return first valid float found among the given keys, or None."""\n    if not d:\n        return None\n    for k in keys:\n        v = d.get(k)\n        if v is not None:\n            try:\n                return float(v)\n            except (TypeError, ValueError):\n                continue\n    return None\n\n\ndef _parse(data: dict) -> dict | None:\n    # Unwrap common envelope keys\n    root = data\n    for wrapper in ("Emision", "BloqueFinanciero", "Estados_Financieros"):\n        if wrapper in root and isinstance(root[wrapper], (dict, list)):\n            root = root[wrapper]\n            break\n\n    # If the API returns a list of periods, take the first (most recent)\n    if isinstance(root, list):\n        root = root[0] if root else {}\n\n    income   = root.get("EstadoResultados") or root.get("Estado_de_Resultados") or root\n    balance  = root.get("Balance") or root.get("Estado_de_Situacion_Financiera") or root\n    cashflow = root.get("FlujosEfectivo") or root.get("Estado_de_Flujos_de_Efectivo") or root\n\n    # Net income: current period and prior period for YoY growth\n    net_now = _num(income,\n        "GananciaNeta", "GananciaPerdida",\n        "GananciaAtribuibleControladora",\n        "GananciaPerdidaAtribuibleAccionistasMayoritarios",\n        "Ganancia",\n    )\n    net_prev = _num(income,\n        "GananciaNeta_PeriodoAnterior", "GananciaPerdida_PA",\n        "GananciaAtribuibleControladora_PA",\n        "GananciaPerdidaAtribuibleAccionistasMayoritarios_PA",\n        "Ganancia_PA",\n    )\n\n    # Debt and equity for D/E ratio\n    debt = _num(balance,\n        "PasivosFinancieros", "DeudaFinanciera",\n        "PasivosFinancierosCorrientesNoCorrientes",\n        "PasivosTotales",\n    )\n    equity = _num(balance,\n        "PatrimonioTotal", "TotalPatrimonio",\n        "Patrimonio", "PatrimonioNeto",\n    )\n\n    # Cash flows for FCF = operating CF - capex\n    op_cf = _num(cashflow,\n        "ActividadesOperacion", "FlujosOperacion",\n        "FlujosEfectivoActividadesOperacion",\n        "EfectivoGeneradoPorActividadesOperacion",\n    )\n    capex = _num(cashflow,\n        "AdquisicionActivosTangibles", "AdquisicionPropiedadPlantaEquipo",\n        "PagosActivosFijos", "InversionActivos",\n    )\n\n    result: dict = {}\n\n    if net_now is not None and net_prev and net_prev != 0:\n        result["earnings_growth"] = (net_now - net_prev) / abs(net_prev)\n\n    if debt is not None and equity and equity > 0:\n        result["debt_to_equity"] = debt / equity\n\n    if op_cf is not None:\n        result["free_cash_flow"] = op_cf - (abs(capex) if capex else 0.0)\n\n    return result if result else None\n\n\ndef fetch_cmf_fundamentals(ticker: str) -> dict | None:\n    """\n    Return {earnings_growth, debt_to_equity, free_cash_flow} from CMF for a .SN ticker.\n    Returns None if CMF_API_KEY not set, ticker not mapped, or API unavailable.\n    """\n    api_key = os.environ.get("CMF_API_KEY")\n    if not api_key:\n        return None\n\n    rut = _rut(ticker)\n    if not rut:\n        return None\n\n    data = _get(rut, api_key)\n    if not data:\n        return None\n\n    return _parse(data)\n
+"""
+Fundamental data for Chilean stocks from CMF (Comisión para el Mercado Financiero).
+
+Requires CMF_API_KEY environment variable.
+Free registration at: https://api.cmfchile.cl/
+
+Returns earnings_growth, debt_to_equity, free_cash_flow to augment yfinance data.
+Only covers tickers with a known RUT mapping (IPSA stocks).
+"""
+
+import os
+import time
+import requests
+
+_API_BASE = "https://api.cmfchile.cl/api-sbifv3/recursos_api"
+
+# Nemotécnico (sin .SN) → RUT chileno
+_TICKER_TO_RUT: dict[str, str] = {
+    "SQM-B":      "93007000-9",
+    "SQM-A":      "93007000-9",
+    "CHILE":      "97004000-5",
+    "FALABELLA":  "81463600-0",
+    "COPEC":      "99520000-7",
+    "ENELAM":     "91081000-6",
+    "CENCOSUD":   "93834000-1",
+    "BSANTANDER": "97036000-K",
+    "ENELCHILE":  "99527000-5",
+    "CMPC":       "93272000-9",
+    "BCI":        "97006000-6",
+    "LTM":        "89862200-2",
+    "COLBUN":     "96505760-9",
+    "RIPLEY":     "76518760-1",
+    "SECURITY":   "90590000-9",
+    "AGUAS-A":    "90290000-6",
+    "IAM":        "76075488-0",
+    "PARAUCO":    "89836400-9",
+    "ITAUCL":     "76645030-K",
+    "SONDA":      "96507290-9",
+    "CCU":        "91705000-6",
+    "ENTEL":      "92580000-7",
+    "SMU":        "76045760-K",
+    "FORUS":      "79613480-2",
+    "HITES":      "79575680-K",
+}
+
+
+def _rut(ticker: str) -> str | None:
+    return _TICKER_TO_RUT.get(ticker.removesuffix(".SN").upper())
+
+
+def _get(rut: str, api_key: str) -> dict | None:
+    try:
+        resp = requests.get(
+            f"{_API_BASE}/empresas/{rut}/estados_financieros",
+            params={"apikey": api_key, "formato": "json"},
+            timeout=15,
+        )
+        time.sleep(0.3)
+        return resp.json() if resp.ok else None
+    except Exception:
+        time.sleep(0.3)
+        return None
+
+
+def _num(d: dict | None, *keys: str) -> float | None:
+    """Return first valid float found among the given keys, or None."""
+    if not d:
+        return None
+    for k in keys:
+        v = d.get(k)
+        if v is not None:
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                continue
+    return None
+
+
+def _parse(data: dict) -> dict | None:
+    # Unwrap common envelope keys
+    root = data
+    for wrapper in ("Emision", "BloqueFinanciero", "Estados_Financieros"):
+        if wrapper in root and isinstance(root[wrapper], (dict, list)):
+            root = root[wrapper]
+            break
+
+    # If the API returns a list of periods, take the first (most recent)
+    if isinstance(root, list):
+        root = root[0] if root else {}
+
+    income   = root.get("EstadoResultados") or root.get("Estado_de_Resultados") or root
+    balance  = root.get("Balance") or root.get("Estado_de_Situacion_Financiera") or root
+    cashflow = root.get("FlujosEfectivo") or root.get("Estado_de_Flujos_de_Efectivo") or root
+
+    # Net income: current period and prior period for YoY growth
+    net_now = _num(income,
+        "GananciaNeta", "GananciaPerdida",
+        "GananciaAtribuibleControladora",
+        "GananciaPerdidaAtribuibleAccionistasMayoritarios",
+        "Ganancia",
+    )
+    net_prev = _num(income,
+        "GananciaNeta_PeriodoAnterior", "GananciaPerdida_PA",
+        "GananciaAtribuibleControladora_PA",
+        "GananciaPerdidaAtribuibleAccionistasMayoritarios_PA",
+        "Ganancia_PA",
+    )
+
+    # Debt and equity for D/E ratio
+    debt = _num(balance,
+        "PasivosFinancieros", "DeudaFinanciera",
+        "PasivosFinancierosCorrientesNoCorrientes",
+        "PasivosTotales",
+    )
+    equity = _num(balance,
+        "PatrimonioTotal", "TotalPatrimonio",
+        "Patrimonio", "PatrimonioNeto",
+    )
+
+    # Cash flows for FCF = operating CF - capex
+    op_cf = _num(cashflow,
+        "ActividadesOperacion", "FlujosOperacion",
+        "FlujosEfectivoActividadesOperacion",
+        "EfectivoGeneradoPorActividadesOperacion",
+    )
+    capex = _num(cashflow,
+        "AdquisicionActivosTangibles", "AdquisicionPropiedadPlantaEquipo",
+        "PagosActivosFijos", "InversionActivos",
+    )
+
+    result: dict = {}
+
+    if net_now is not None and net_prev and net_prev != 0:
+        result["earnings_growth"] = (net_now - net_prev) / abs(net_prev)
+
+    if debt is not None and equity and equity > 0:
+        result["debt_to_equity"] = debt / equity
+
+    if op_cf is not None:
+        result["free_cash_flow"] = op_cf - (abs(capex) if capex else 0.0)
+
+    return result if result else None
+
+
+def fetch_cmf_fundamentals(ticker: str) -> dict | None:
+    """
+    Return {earnings_growth, debt_to_equity, free_cash_flow} from CMF for a .SN ticker.
+    Returns None if CMF_API_KEY not set, ticker not mapped, or API unavailable.
+    """
+    api_key = os.environ.get("CMF_API_KEY")
+    if not api_key:
+        return None
+
+    rut = _rut(ticker)
+    if not rut:
+        return None
+
+    data = _get(rut, api_key)
+    if not data:
+        return None
+
+    return _parse(data)
