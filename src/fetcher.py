@@ -3,6 +3,7 @@
 import time
 import pandas as pd
 import yfinance as yf
+from cmf_fetcher import fetch_cmf_fundamentals
 
 
 def _normalize_div_yield(raw) -> float:
@@ -29,6 +30,7 @@ def _get_growth(info: dict) -> float | None:
 def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
     """
     Return a dict of fundamental data for `ticker`, or None if data is insufficient.
+    For Chilean tickers (.SN), augments yfinance data with CMF fundamentals when available.
     Sleeps `sleep` seconds after each call to avoid Yahoo Finance rate-limiting.
     """
     try:
@@ -37,6 +39,11 @@ def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
 
         pe     = info.get("trailingPE")
         growth = _get_growth(info)
+
+        cmf = fetch_cmf_fundamentals(ticker) if ticker.endswith(".SN") else None
+
+        if cmf:
+            growth = cmf.get("earnings_growth") or growth
 
         if pe is None or growth is None:
             return None
@@ -52,8 +59,8 @@ def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
             "market_cap":    info.get("marketCap"),
             "pe":            pe,
             "earnings_growth": growth,
-            "debt_to_equity":  info.get("debtToEquity"),
-            "free_cash_flow":  info.get("freeCashflow"),
+            "debt_to_equity":  (cmf.get("debt_to_equity") if cmf else None) or info.get("debtToEquity"),
+            "free_cash_flow":  (cmf.get("free_cash_flow") if cmf else None) or info.get("freeCashflow"),
             "dividend_yield":  _normalize_div_yield(info.get("dividendYield")),
             "total_cash":    info.get("totalCash"),
             "total_debt":    info.get("totalDebt"),
@@ -67,6 +74,7 @@ def fetch_fundamentals(ticker: str, sleep: float = 0.3) -> dict | None:
 def fetch_fundamentals_lenient(ticker: str, sleep: float = 0.3) -> dict | None:
     """
     Like fetch_fundamentals but returns partial data even without PE/growth.
+    For Chilean tickers (.SN), augments yfinance data with CMF fundamentals when available.
     Used for watchlist mode where technical data is always wanted.
     """
     try:
@@ -79,6 +87,11 @@ def fetch_fundamentals_lenient(ticker: str, sleep: float = 0.3) -> dict | None:
         pe     = info.get("trailingPE")
         growth = _get_growth(info)
 
+        cmf = fetch_cmf_fundamentals(ticker) if ticker.endswith(".SN") else None
+
+        if cmf:
+            growth = cmf.get("earnings_growth") or growth
+
         return {
             "ticker":        ticker,
             "name":          info.get("shortName", ticker),
@@ -88,8 +101,8 @@ def fetch_fundamentals_lenient(ticker: str, sleep: float = 0.3) -> dict | None:
             "market_cap":    info.get("marketCap"),
             "pe":            pe if (pe and pe > 0) else None,
             "earnings_growth": growth if (growth and growth > 0) else None,
-            "debt_to_equity":  info.get("debtToEquity"),
-            "free_cash_flow":  info.get("freeCashflow"),
+            "debt_to_equity":  (cmf.get("debt_to_equity") if cmf else None) or info.get("debtToEquity"),
+            "free_cash_flow":  (cmf.get("free_cash_flow") if cmf else None) or info.get("freeCashflow"),
             "dividend_yield":  _normalize_div_yield(info.get("dividendYield")),
             "total_cash":    info.get("totalCash"),
             "total_debt":    info.get("totalDebt"),

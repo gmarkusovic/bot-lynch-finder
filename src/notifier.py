@@ -70,19 +70,24 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
         if not results:
             continue
 
-        visible = [r for r in results if r.signal in SHOW_SIGNALS]
+        is_watchlist = market == "watchlist"
+        # Watchlist siempre muestra todos; screener solo muestra señales accionables
+        visible = results if is_watchlist else [r for r in results if r.signal in SHOW_SIGNALS]
+
         if not visible:
-            lines.append(f"\n<b>── {market.upper()} ──</b>")
+            lines.append(f"\n── {market.upper()} ──")
             lines.append("Sin alertas destacadas hoy.")
             continue
 
-        by_signal: dict[str, list[LynchResult]] = {s: [] for s in SIGNAL_ORDER}
+        # Watchlist incluye NEUTRAL y PENDIENTE en el orden de visualización
+        signal_order = (SIGNAL_ORDER + ["NEUTRAL", "PENDIENTE"]) if is_watchlist else SIGNAL_ORDER
+        by_signal: dict[str, list[LynchResult]] = {s: [] for s in signal_order}
         for r in visible:
-            by_signal[r.signal].append(r)
+            by_signal.setdefault(r.signal, []).append(r)
 
         lines.append(f"\n{'='*22} {market.upper()} {'='*22}")
 
-        for signal in SIGNAL_ORDER:
+        for signal in signal_order:
             group = sorted(by_signal[signal], key=lambda r: r.peg if r.peg else 99)
             if not group:
                 continue
