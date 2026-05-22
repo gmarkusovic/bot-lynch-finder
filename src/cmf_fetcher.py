@@ -117,7 +117,7 @@ def _parse(data: dict) -> dict | None:
         "Patrimonio", "PatrimonioNeto",
     )
 
-    # Cash flows for FCF = operating CF - capex
+    # Cash flows for FCF = operating CF − capex
     op_cf = _num(cashflow,
         "ActividadesOperacion", "FlujosOperacion",
         "FlujosEfectivoActividadesOperacion",
