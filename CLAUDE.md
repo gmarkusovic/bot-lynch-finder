@@ -5,7 +5,7 @@
 
 ## 1. Contexto del Proyecto
 
-Screener de acciones basado en **Peter Lynch** (PEG ≤ 1, EPS growth, D/E < 0.5, FCF > 0) combinado con **análisis técnico** (RSI 14, MACD 12-26-9, SMA50/200). Cubre **USA** (S&P 500), **Europa** (STOXX 600) y **Chile** (IPSA). Sin API key — usa `yfinance`. Scheduling automático vía **GitHub Actions** (cron lunes–viernes 14:00 UTC).
+Screener de acciones basado en **Peter Lynch** (PEG ≤ 1, EPS growth, D/E < 0.5, FCF > 0) combinado con **análisis técnico** (RSI 14, MACD 12-26-9, SMA50/200). Cubre **USA** (S&P 500), **Europa** (STOXX 600) y **Chile** (Bolsa de Santiago completa, ~65 empresas). Usa `yfinance` + CMF API para fundamentales chilenos. Scheduling automático vía **GitHub Actions** (cron lunes–viernes 14:47 UTC → ~11:00 AM Santiago).
 
 **Señales posibles:** `COMPRA_FUERTE` · `COMPRA` · `SEGUIMIENTO` · `SOBRECOMPRADA` · `VENTA` · `NEUTRAL`
 
