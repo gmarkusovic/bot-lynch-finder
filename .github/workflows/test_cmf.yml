@@ -4,11 +4,12 @@ on:
   push:
     paths:
       - '.github/workflows/test_cmf.yml'
+      - 'scripts/test_cmf.py'
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 3
     env:
       CMF_API_KEY: ${{ secrets.CMF_API_KEY }}
     steps:
@@ -18,33 +19,4 @@ jobs:
           python-version: '3.11'
       - run: pip install requests
       - name: Test CMF connection
-        run: |
-          python3 - <<'EOF'
-          import os, requests, json
-
-          api_key = os.environ.get("CMF_API_KEY")
-          if not api_key:
-              print("ERROR: CMF_API_KEY no configurado")
-              exit(1)
-
-          ruts = {
-              "SQM-B": "93007000-9",
-              "CHILE": "97004000-5",
-              "FALABELLA": "81463600-0",
-          }
-
-          base = "https://api.cmfchile.cl/api-sbifv3/recursos_api"
-
-          for ticker, rut in ruts.items():
-              url = f"{base}/empresas/{rut}/estados_financieros"
-              resp = requests.get(url, params={"apikey": api_key, "formato": "json"}, timeout=15)
-              print(f"{ticker} ({rut}): HTTP {resp.status_code}")
-              if resp.ok:
-                  data = resp.json()
-                  keys = list(data.keys()) if isinstance(data, dict) else f"list[{len(data)}]"
-                  print(f"  Claves raiz: {keys}")
-                  print(f"  Primeros 300 chars: {str(data)[:300]}")
-              else:
-                  print(f"  Error: {resp.text[:200]}")
-              print()
-          EOF
+        run: python scripts/test_cmf.py
