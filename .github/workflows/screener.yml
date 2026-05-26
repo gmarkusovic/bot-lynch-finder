@@ -1,11 +1,11 @@
 name: Lynch Screener
 
+# El trigger 'schedule' de GitHub tiene delays de hasta 6h en cuentas gratuitas.
+# Este workflow se dispara via workflow_dispatch desde cron-job.org a las 11:00 AM
+# y 14:00 PM Santiago exactos. El schedule es solo respaldo (puede llegar tarde).
 on:
   schedule:
-    # Invierno Chile (abr–ago): UTC-4
-    - cron: '47 14 * * 1-5'  # Chile + watchlist → ~11:00 AM Santiago (~5 min)
-    - cron: '47 17 * * 1-5'  # USA            → ~2:00 PM Santiago  (~30 min)
-    # Verano Chile (sep–mar): UTC-3 → cambiar a '47 13' y '47 16'
+    - cron: '47 14 * * 1-5'  # respaldo (puede llegar tarde por delays de GitHub)
   workflow_dispatch:
     inputs:
       market:
@@ -45,16 +45,10 @@ jobs:
 
       - name: Run Lynch screener
         run: |
-          if [[ "${{ github.event.schedule }}" == "47 17 * * 1-5" ]]; then
-            echo "Ejecución USA (tarde)"
-            python src/main.py --mode screener --market usa
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "Ejecución manual: mercado=${{ inputs.market }}"
-            python src/main.py --mode all --market ${{ inputs.market }}
-          else
-            echo "Ejecución Chile + watchlist (mañana)"
-            python src/main.py --mode all --market chile
-          fi
+          MARKET="${{ inputs.market }}"
+          MARKET="${MARKET:-chile}"
+          echo "Mercado: $MARKET"
+          python src/main.py --mode all --market "$MARKET"
 
       - name: Commit HTML report to docs/
         run: |
@@ -71,3 +65,4 @@ jobs:
           name: lynch-results-${{ github.run_id }}
           path: results/
           retention-days: 30
+
