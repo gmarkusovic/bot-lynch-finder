@@ -1,11 +1,8 @@
 name: Lynch Screener
 
-# El trigger 'schedule' de GitHub tiene delays de hasta 6h en cuentas gratuitas.
-# Este workflow se dispara via workflow_dispatch desde cron-job.org a las 11:00 AM
-# y 14:00 PM Santiago exactos. El schedule es solo respaldo (puede llegar tarde).
+# Disparado exclusivamente via workflow_dispatch desde cron-job.org.
+# GitHub schedule tiene delays de hasta 6h en cuentas gratuitas → no se usa.
 on:
-  schedule:
-    - cron: '47 14 * * 1-5'  # respaldo (puede llegar tarde por delays de GitHub)
   workflow_dispatch:
     inputs:
       market:
