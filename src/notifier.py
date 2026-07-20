@@ -27,7 +27,7 @@ def _macd_label(mh: float | None) -> str:
     return f"{mh:.4f} 📈 Alcista" if mh > 0 else f"{mh:.4f} 📉 Bajista"
 
 
-def _stock_block(r: LynchResult) -> str:
+def _stock_block(r: LynchResult, research: str = "") -> str:
     emoji  = SIGNAL_EMOJI.get(r.signal, "")
     lynch  = "✅ Lynch OK" if r.passes_all else "❌ Lynch NO"
     price  = f"${r.price:,.2f}" if r.price else "—"
@@ -43,7 +43,7 @@ def _stock_block(r: LynchResult) -> str:
     sma50  = f"{r.price_vs_sma50:+.1f}%"  if r.price_vs_sma50  is not None else "—"
     sma200 = f"{r.price_vs_sma200:+.1f}%" if r.price_vs_sma200 is not None else "—"
 
-    return (
+    block = (
         f"\n{r.ticker} - {r.name}\n"
         f"💲 Precio: {price}\n"
         f"{emoji} {r.signal.replace('_', ' ')} · {r.category} · {lynch}\n"
@@ -61,9 +61,36 @@ def _stock_block(r: LynchResult) -> str:
         f"  SMA50: {sma50}  SMA200: {sma200}\n"
         f">> {r.signal_reason}"
     )
+    if research:
+        block += f"\n\n🔍 Research web:\n{research}"
+    return block
+
+
+_RESEARCH_SIGNALS = {"COMPRA_FUERTE", "COMPRA"}
+
+
+def _collect_research_candidates(
+    all_results: dict[str, list[LynchResult]],
+) -> list[tuple[str, str]]:
+    """Return (ticker, name) pairs for COMPRA_FUERTE/COMPRA, sorted best-first."""
+    order = {"COMPRA_FUERTE": 0, "COMPRA": 1}
+    seen: set[str] = set()
+    candidates: list[tuple[str, str, int, float]] = []
+    for results in all_results.values():
+        for r in results:
+            if r.signal in _RESEARCH_SIGNALS and r.ticker not in seen:
+                seen.add(r.ticker)
+                candidates.append((r.ticker, r.name, order[r.signal], r.peg or 99.0))
+    candidates.sort(key=lambda x: (x[2], x[3]))
+    return [(t, n) for t, n, *_ in candidates]
 
 
 def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) -> str:
+    from research_enricher import enrich_signals
+
+    candidates = _collect_research_candidates(all_results)
+    research = enrich_signals(candidates)
+
     lines = [f"📊 LynchFinder — {date_str}"]
 
     for market, results in all_results.items():
@@ -94,7 +121,7 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
             emoji = SIGNAL_EMOJI.get(signal, "")
             lines.append(f"\n{emoji} {signal.replace('_', ' ')} ({len(group)})")
             for r in group:
-                lines.append(_stock_block(r))
+                lines.append(_stock_block(r, research.get(r.ticker, "")))
                 lines.append("-" * 32)
 
     url = pages_url()
