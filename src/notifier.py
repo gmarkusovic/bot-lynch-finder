@@ -97,7 +97,7 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
     # Recopilar todos los COMPRA_FUERTE para análisis IA (una sola llamada)
     all_top: list[LynchResult] = []
     for results in all_results.values():
-        all_top += [r for r in results if r.signal == "COMPRA_FUERTE"]
+        all_top += [r for r in results if r.signal in {"COMPRA_FUERTE", "COMPRA"}]
     all_top = sorted(all_top, key=lambda r: r.peg if r.peg else 99)
     ai_comments: dict[str, str] = ai_analyst.analyze(all_top)
 
