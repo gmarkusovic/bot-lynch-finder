@@ -5,6 +5,7 @@ import requests
 
 from criteria import LynchResult
 from utils import fmt, fcf_icon, pages_url, SIGNAL_EMOJI, SIGNAL_ORDER, SHOW_SIGNALS
+import ai_analyst
 
 
 def _rsi_label(rsi: float | None) -> str:
@@ -93,6 +94,13 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
 
     lines = [f"📊 LynchFinder — {date_str}"]
 
+    # Recopilar todos los COMPRA_FUERTE para análisis IA (una sola llamada)
+    all_top: list[LynchResult] = []
+    for results in all_results.values():
+        all_top += [r for r in results if r.signal == "COMPRA_FUERTE"]
+    all_top = sorted(all_top, key=lambda r: r.peg if r.peg else 99)
+    ai_comments: dict[str, str] = ai_analyst.analyze(all_top)
+
     for market, results in all_results.items():
         if not results:
             continue
@@ -122,6 +130,8 @@ def _format_results(all_results: dict[str, list[LynchResult]], date_str: str) ->
             lines.append(f"\n{emoji} {signal.replace('_', ' ')} ({len(group)})")
             for r in group:
                 lines.append(_stock_block(r, research.get(r.ticker, "")))
+                if r.ticker in ai_comments:
+                    lines.append(f"🤖 IA: {ai_comments[r.ticker]}")
                 lines.append("-" * 32)
 
     url = pages_url()
